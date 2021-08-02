@@ -34,10 +34,9 @@
          unpack="false"/>
 
    <plugin
-         id="org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow"
+         id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>
