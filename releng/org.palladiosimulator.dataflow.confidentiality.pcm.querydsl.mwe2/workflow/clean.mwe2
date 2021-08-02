@@ -17,10 +17,10 @@ Workflow {
 
 	component = URISupportingDirectoryCleaner {
 		exclude = ".gitkeep"
-		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm/src-gen"
-		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.ide/src-gen"
-		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.tests/src-gen"
-		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.ui/src-gen"
-		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.ui.tests/src-gen"
+		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.pcm.querydsl/src-gen"
+		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ide/src-gen"
+		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.tests/src-gen"
+		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui/src-gen"
+		directory = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.tests/src-gen"
 	}
 }

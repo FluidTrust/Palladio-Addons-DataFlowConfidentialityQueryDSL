@@ -1,4 +1,4 @@
-module org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.GeneratePCMDFDConstraintLanguage
+module org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.GeneratePCMDFDConstraintLanguage
 
 import tools.mdsd.ecoreworkflow.mwe2lib.bean.EclipseRCPSupportingStandaloneSetup
 import org.eclipse.xtext.xtext.generator.*
@@ -6,7 +6,7 @@ import org.eclipse.xtext.xtext.generator.model.project.*
 
 var workspaceRoot = "../.."
 var rootPath = "${workspaceRoot}/bundles"
-var baseName = "org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm"
+var baseName = "org.palladiosimulator.dataflow.confidentiality.pcm.querydsl"
 
 
 Workflow {

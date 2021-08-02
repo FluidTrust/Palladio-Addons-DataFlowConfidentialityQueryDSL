@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.generator.PCMDFDConstraintLanguageGenerator;
-import org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.pCMDFDConstraintLanguage.Model;
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.generator.PCMDFDConstraintLanguageGenerator;
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.Model;
 import org.palladiosimulator.dataflow.confidentiality.pcm.workflow.TransitiveTransformationTrace;
 import org.palladiosimulator.dataflow.confidentiality.transformation.workflow.blackboards.KeyValueMDSDBlackboard;
 

@@ -1,8 +1,8 @@
 package org.palladiosiumlator.dataflow.confidentiality.pcm.transformation.dcp.workflow.tests.util;
 
 import org.eclipse.emf.common.util.URI;
-import org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.PCMDFDConstraintLanguageStandaloneSetup;
 import org.palladiosimulator.dataflow.confidentiality.pcm.model.profile.ProfileConstants;
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.PCMDFDConstraintLanguageStandaloneSetup;
 import org.palladiosimulator.dataflow.confidentiality.pcm.testmodels.Activator;
 import org.palladiosimulator.supporting.prolog.PrologStandaloneSetup;
 

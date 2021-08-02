@@ -13,7 +13,7 @@ Require-Bundle: org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bund
  de.uka.ipd.sdq.workflow;bundle-version="4.2.0",
  de.uka.ipd.sdq.workflow.mdsd;bundle-version="4.2.0",
  org.palladiosimulator.pcm,
- org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm,
+ org.palladiosimulator.dataflow.confidentiality.pcm.querydsl,
  org.palladiosimulator.supporting.prolog.model,
  org.palladiosimulator.dataflow.confidentiality.transformation.dcp.workflow,
  de.sebinside.dcp.dsl

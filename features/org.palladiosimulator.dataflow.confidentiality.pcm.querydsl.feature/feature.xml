@@ -13,30 +13,29 @@
    </requires>
 
    <plugin
-         id="org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.ide"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
