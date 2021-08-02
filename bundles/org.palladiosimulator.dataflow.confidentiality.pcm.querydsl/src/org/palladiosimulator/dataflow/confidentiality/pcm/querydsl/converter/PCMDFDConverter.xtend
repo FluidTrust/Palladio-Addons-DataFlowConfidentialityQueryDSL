@@ -74,7 +74,7 @@ class PCMDFDConverter extends DFDConverter {
 	}
 	
 	override resolveQualifiedName(String id, Boolean fullName) {
-		var entries = trace.getPCMEntries(id)
+//		var entries = trace.getPCMEntries(id)
 		id
 		//throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}

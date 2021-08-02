@@ -1,20 +1,19 @@
 package org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.tests
 
-import org.prolog4j.swicli.SWIPrologCLIProverFactory
-import org.prolog4j.Prover
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import java.util.Arrays
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.emf.ecore.util.EcoreUtil
+import org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.TransformPCMDFDWithConstraintsToPrologWorkflowFactory
+import org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.jobs.TransformPCMDFDWithConstraintsToPrologJobBuilder
+import org.palladiosimulator.pcm.allocation.Allocation
+import org.palladiosimulator.pcm.usagemodel.UsageModel
+import org.palladiosiumlator.dataflow.confidentiality.pcm.transformation.dcp.workflow.tests.util.PCMDCPDSLStandaloneUtil
+import org.prolog4j.Prover
+import org.prolog4j.swicli.DefaultSWIPrologExecutableProvider
+import org.prolog4j.swicli.SWIPrologCLIProverFactory
 import org.prolog4j.swicli.SWIPrologCLIProverFactory.SWIPrologExecutableProviderStandalone
 import org.prolog4j.swicli.enabler.SWIPrologEmbeddedFallbackExecutableProvider
-import org.prolog4j.swicli.DefaultSWIPrologExecutableProvider
-import org.palladiosimulator.pcm.usagemodel.UsageModel
-import org.palladiosimulator.pcm.allocation.Allocation
-import org.eclipse.emf.ecore.util.EcoreUtil
-import org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.jobs.TransformPCMDFDWithConstraintsToPrologJobBuilder
-import org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.TransformPCMDFDWithConstraintsToPrologWorkflowFactory
-import org.eclipse.emf.common.util.URI
-import org.palladiosimulator.pcm.usagemodel.UsagemodelPackage
-import org.palladiosiumlator.dataflow.confidentiality.pcm.transformation.dcp.workflow.tests.util.PCMDCPDSLStandaloneUtil
 
 class TestTest {
 	static SWIPrologCLIProverFactory proverFactory
