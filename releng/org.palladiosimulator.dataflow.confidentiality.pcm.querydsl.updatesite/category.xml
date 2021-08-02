@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.feature">
+      <category name="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl"/>
+   </feature>
+   <feature id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.feature.source">
+      <category name="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.source"/>
+   </feature>
+   <category-def name="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl" label="PCM Data Flow Confidentiality Query DSL"/>
+   <category-def name="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.source" label="PCM Data Flow Confidentiality Query DSL Development Resources"/>
+</site>

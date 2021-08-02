@@ -26,7 +26,8 @@ Require-Bundle: org.eclipse.xtext,
  org.palladiosimulator.dataflow.confidentiality.transformation.workflow,
  org.palladiosimulator.dataflow.confidentiality.transformation.prolog,
  org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bundle-version="0.1.0",
- org.palladiosimulator.dataflow.confidentiality.pcm.transformation;bundle-version="1.0.0"
+ org.palladiosimulator.dataflow.confidentiality.pcm.transformation;bundle-version="1.0.0",
+ org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.mwe2;bundle-version="5.0.0";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm,
  org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.generator,
