@@ -17,25 +17,9 @@ import "platform:/resource/org.palladiosimulator.pcm/model/pcm.ecore#//seff" as 
 
 
 @Override
-Model: //necessary
-	(targetModelType=TargetModelTypeDef)?
+Model:
 	(elements+=AbstractElement)*;
 	
-@Override
-TargetModelTypeDef:
-	'target' type="PCMDFD" 'using' pcmTypeContainer=[pcmDictionary::CharacteristicTypeDictionary] 
-		(',' usageModel=[usagemodel::UsageModel] ',' repositoryModel=[repository::Repository])?
-;
-//	
-//PCMTargetModelTypeDef:
-//	'target' type="PCMDFD" 'using' pcmTypeContainer=[pcmDictionary::CharacteristicTypeDictionary] 
-//		',' usageModel=[usagemodel::UsageModel] ',' repositoryModel=[repository::Repository]
-//;
-
-//@Override	
-//DestinationSelector returns base::DestinationSelector:
-//	PropertySelector | PropertyClassSelector | ComponentIdentitySelector;
-
 @Override
 PropertySelector:
 	'component.property.' ref=CharacteristicTypeSelector;

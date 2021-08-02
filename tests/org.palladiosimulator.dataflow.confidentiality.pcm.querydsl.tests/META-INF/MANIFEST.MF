@@ -13,6 +13,8 @@ Require-Bundle: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl,
  org.eclipse.xtext.xbase.lib;bundle-version="2.14.0",
  org.palladiosimulator.dataflow.diagram.characterized;bundle-version="0.1.0";visibility:=reexport,
  org.palladiosimulator.dataflow.dictionary.characterized;bundle-version="0.1.0";visibility:=reexport,
- de.sebinside.dcp.dsl;bundle-version="1.0.0"
+ de.sebinside.dcp.dsl;bundle-version="1.0.0",
+ org.palladiosimulator.dataflow.confidentiality.pcm.model;bundle-version="0.1.0",
+ tools.mdsd.library.standalone.initialization;bundle-version="0.2.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.tests;x-internal=true

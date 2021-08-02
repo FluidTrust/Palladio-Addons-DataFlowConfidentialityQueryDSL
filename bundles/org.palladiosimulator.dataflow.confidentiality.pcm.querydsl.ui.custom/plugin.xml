@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.palladiosimulator.pcmbench.palladio_modeling_category"
+            class="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.wizard.QueryFileCreationWizard"
+            icon="icons/query.png"
+            id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.wizard.newquery"
+            name="PCM Confidentiality Query"
+            project="false">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.wizard.QueryFileCreationCommand"
+            id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.commons.newquery"
+            name="New PCM Confidentiality Query">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.palladiosimulator.editors.sirius.ui.PCMToolbar?after=pcmddc">
+         <command
+               commandId="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.commons.newquery"
+               icon="icons/query.png"
+               id="pcmquery"
+               label="Create a new PCM Confidentiality Query from scratch"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
