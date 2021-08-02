@@ -21,8 +21,8 @@ import org.palladiosimulator.dataflow.confidentiality.pcm.model.confidentiality.
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.PCMDFDConstraintLanguageFactory
 import tools.mdsd.library.standalone.initialization.StandaloneInitializerBuilder
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertNotNull
 
 @ExtendWith(InjectionExtension)
 @InjectWith(PCMDFDConstraintLanguageInjectorProvider)

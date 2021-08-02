@@ -3,11 +3,6 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="pCMDFDConstraintLanguage" nsURI="http://www.palladiosimulator.org/dataflow/confidentiality/pcm/querydsl/PCMDFDConstraintLanguage"
     nsPrefix="pCMDFDConstraintLanguage">
   <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="platform:/resource/de.sebinside.dcp.dsl/model/generated/DSL.ecore#//Model"/>
-  <eClassifiers xsi:type="ecore:EClass" name="TargetModelTypeDef" eSuperTypes="platform:/resource/de.sebinside.dcp.dsl/model/generated/DSL.ecore#//TargetModelTypeDef">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="pcmTypeContainer" eType="ecore:EClass platform:/resource/org.palladiosimulator.dataflow.confidentiality.pcm.model/model/dataFlowConfidentiality.ecore#//characteristics/CharacteristicTypeDictionary"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="usageModel" eType="ecore:EClass platform:/resource/org.palladiosimulator.pcm/model/pcm.ecore#//usagemodel/UsageModel"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="repositoryModel" eType="ecore:EClass platform:/resource/org.palladiosimulator.pcm/model/pcm.ecore#//repository/Repository"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertySelector" eSuperTypes="platform:/resource/de.sebinside.dcp.dsl/model/generated/DSL.ecore#//PropertySelector"/>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyClassSelector" eSuperTypes="platform:/resource/de.sebinside.dcp.dsl/model/generated/DSL.ecore#//PropertyClassSelector"/>
   <eClassifiers xsi:type="ecore:EClass" name="NodeIdentitiySelector" eSuperTypes="platform:/resource/de.sebinside.dcp.dsl/model/generated/DSL.ecore#//NodeIdentitiySelector">
