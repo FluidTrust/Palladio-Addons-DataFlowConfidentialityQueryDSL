@@ -38,7 +38,10 @@ public class TransformPCMDFDWithConstraintsToPrologJobBuilder {
 	private TransformPCMDFDToPrologJobBuilder base = new TransformPCMDFDToPrologJobBuilder();
 	
 	public static TransformPCMDFDWithConstraintsToPrologJobBuilder create() {
-        return new TransformPCMDFDWithConstraintsToPrologJobBuilder();
+        var builder = new TransformPCMDFDWithConstraintsToPrologJobBuilder();
+        builder.addSerializeModelToString(); // meet API requirements
+        builder.addSerializeDCPPrologToString(); // reasonable default
+        return builder;
     }
 	
 	public TransformPCMDFDWithConstraintsToPrologJob<? extends KeyValueMDSDBlackboard> build() {
