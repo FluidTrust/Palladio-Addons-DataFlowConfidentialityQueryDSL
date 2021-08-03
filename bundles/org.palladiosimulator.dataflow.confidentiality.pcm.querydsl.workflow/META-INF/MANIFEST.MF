@@ -9,11 +9,11 @@ Export-Package: org.palladiosimulator.dataflow.confidentiality.pcm.transformatio
  org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.impl,
  org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.jobs,
  org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.jobs.impl
-Require-Bundle: org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bundle-version="0.1.0",
- de.uka.ipd.sdq.workflow;bundle-version="4.2.0",
- de.uka.ipd.sdq.workflow.mdsd;bundle-version="4.2.0",
+Require-Bundle: org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bundle-version="0.1.0";visibility:=reexport,
+ de.uka.ipd.sdq.workflow;bundle-version="4.2.0";visibility:=reexport,
+ de.uka.ipd.sdq.workflow.mdsd;bundle-version="4.2.0";visibility:=reexport,
  org.palladiosimulator.pcm,
- org.palladiosimulator.dataflow.confidentiality.pcm.querydsl,
+ org.palladiosimulator.dataflow.confidentiality.pcm.querydsl;visibility:=reexport,
  org.palladiosimulator.supporting.prolog.model,
- org.palladiosimulator.dataflow.confidentiality.transformation.dcp.workflow,
+ org.palladiosimulator.dataflow.confidentiality.transformation.dcp.workflow;visibility:=reexport,
  de.sebinside.dcp.dsl

@@ -34,5 +34,22 @@
          </command>
       </menuContribution>
    </extension>
-
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.launch.PCMConfidentialityDSLLaunchConfigurationType"
+            id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.launchConfigurationType.dslanalysis"
+            modes="run"
+            name="PCM Confidentiality (DSL)"
+            public="true">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.launch.PCMConfidentialityDSLLaunchTabGroup"
+            id="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.launchConfigurationTabGroup.dslanalysis"
+            type="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.launchConfigurationType.dslanalysis">
+      </launchConfigurationTabGroup>
+   </extension>
 </plugin>

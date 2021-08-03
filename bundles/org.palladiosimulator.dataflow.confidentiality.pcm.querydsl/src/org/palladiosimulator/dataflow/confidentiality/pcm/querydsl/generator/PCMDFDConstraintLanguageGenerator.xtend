@@ -49,18 +49,19 @@ class PCMDFDConstraintLanguageGenerator extends DSLGenerator {
 
 	override compile(TargetModelTypeDef typeDefs) {
 		// There is only one or none target model type definition
-		this.targetModelType = typeDefs.type
+//		this.targetModelType = typeDefs.type
 		
-		switch this.targetModelType {
-			case "PCMDFD": { 
+//		switch this.targetModelType {
+//			case "PCMDFD": { 
 				if(transitiveTransformationTrace === null) {
 						throw new Exception("No valid trace for DFD!")
 				}
 				this.pcmDFDConverter = new PCMDFDConverter(transitiveTransformationTrace)
-				this.converter = this.pcmDFDConverter} 
-			case "DFD": super.compile(typeDefs)
-			default: throw new Exception("No valid type definition given!")
-		}
+				this.converter = this.pcmDFDConverter
+//				} 
+//			case "DFD": super.compile(typeDefs)
+//			default: throw new Exception("No valid type definition given!")
+//		}
 	}
 	
 	override generateRule(Rule mainRule, String constraintName, Converter converter) {
