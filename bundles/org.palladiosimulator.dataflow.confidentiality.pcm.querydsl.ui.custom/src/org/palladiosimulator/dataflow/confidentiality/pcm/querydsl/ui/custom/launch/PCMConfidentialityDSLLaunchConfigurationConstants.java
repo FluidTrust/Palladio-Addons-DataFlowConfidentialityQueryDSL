@@ -12,6 +12,7 @@ public final class PCMConfidentialityDSLLaunchConfigurationConstants {
     public static final String USAGE_MODEL_FILE_ATTRIBUTE = "usageModel";
     public static final String ALLOCATION_MODEL_FILE_ATTRIBUTE = "allocation";
     public static final String QUERY_FILE_ATTRIBUTE = "query";
+    public static final String RESULT_FILE_ATTRIBUTE = "result";
 
     protected static final IWorkspaceRoot ROOT = ResourcesPlugin.getWorkspace()
         .getRoot();

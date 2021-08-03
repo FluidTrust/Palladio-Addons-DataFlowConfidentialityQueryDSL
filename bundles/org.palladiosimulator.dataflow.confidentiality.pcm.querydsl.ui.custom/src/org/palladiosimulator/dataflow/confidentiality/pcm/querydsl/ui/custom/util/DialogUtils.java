@@ -79,7 +79,7 @@ public final class DialogUtils {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 super.widgetSelected(e);
-                var existingSelection = findWorkspaceFile(text).map(f -> new IFile[] { f })
+                var existingSelection = findExistingWorkspaceFile(text).map(f -> new IFile[] { f })
                     .orElse(new IFile[0]);
                 var selectionResult = WorkspaceResourceDialog.openFileSelection(parent.getShell(),
                         "Selection of " + artifact, "Select a " + artifact, false, existingSelection,
@@ -106,7 +106,7 @@ public final class DialogUtils {
         text.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
-                var workspaceFile = findWorkspaceFile(text);
+                var workspaceFile = findExistingWorkspaceFile(text);
                 valueHolder.setValue(workspaceFile.orElse(null));
             }
         });
@@ -127,11 +127,20 @@ public final class DialogUtils {
         return text;
     }
 
-    protected static Optional<IFile> findWorkspaceFile(Text text) {
+    public static Optional<IFile> findWorkspaceFile(Text text) {
         return Optional.ofNullable(text.getText())
             .filter(s -> !s.isBlank())
             .map(Path::fromPortableString)
-            .map(ROOT::getFile)
-            .filter(IFile::exists);
+            .map(f -> {
+                try {
+                    return ROOT.getFile(f);
+                } catch (IllegalArgumentException e) {
+                    return null;
+                }
+            });
+    }
+
+    public static Optional<IFile> findExistingWorkspaceFile(Text text) {
+        return findWorkspaceFile(text).filter(IFile::exists);
     }
 }

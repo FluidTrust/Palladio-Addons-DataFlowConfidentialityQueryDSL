@@ -3,6 +3,7 @@ package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.la
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,9 +19,19 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.emf.common.ui.dialogs.WorkspaceResourceDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.Activator;
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.custom.util.DialogUtils;
 
@@ -31,6 +42,7 @@ public class PCMConfidentialityDSLLaunchConfigurationTab extends AbstractLaunchC
     }
 
     protected final Map<String, IObservableValue<IFile>> fileValues = new HashMap<>();
+    protected final IObservableValue<IFile> resultFileValue = new WritableValue<IFile>(null, IFile.class);
     protected final Collection<Runnable> disposeTasks = new ArrayList<>();
     protected final Map<String, String> errorMessages = new HashMap<>();
 
@@ -58,7 +70,65 @@ public class PCMConfidentialityDSLLaunchConfigurationTab extends AbstractLaunchC
         addFileControls(composite, "Analysis Definition",
                 PCMConfidentialityDSLLaunchConfigurationConstants.QUERY_FILE_ATTRIBUTE, Arrays.asList("DCPDSL", "xmi"));
 
+        addNewFileControlForResult(parent, composite);
+
         setControl(composite);
+    }
+
+    protected void addNewFileControlForResult(Composite parent, Composite composite) {
+        var resultLabel = new Label(composite, SWT.NONE);
+        resultLabel.setText("Result File");
+
+        var resultText = new Text(composite, SWT.FILL);
+        var textGridData = new GridData();
+        textGridData.horizontalAlignment = GridData.FILL;
+        textGridData.grabExcessHorizontalSpace = true;
+        resultText.setLayoutData(textGridData);
+
+        resultText.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                var workspaceFile = DialogUtils.findWorkspaceFile(resultText);
+                resultFileValue.setValue(workspaceFile.filter(f -> f.getParent()
+                    .exists())
+                    .orElse(null));
+            }
+        });
+
+        IValueChangeListener<IFile> valueHolderListener = e -> {
+            var newTextContent = Optional.ofNullable(e.diff.getNewValue())
+                .map(IFile::getFullPath)
+                .map(IPath::toPortableString)
+                .orElse(null);
+            if (newTextContent != null && !newTextContent.equals(resultText.getText()) && !resultText.isDisposed()) {
+                Display.getCurrent()
+                    .asyncExec(() -> resultText.setText(newTextContent));
+            }
+        };
+        resultFileValue.addValueChangeListener(valueHolderListener);
+        disposeTasks.add(() -> resultFileValue.removeValueChangeListener(valueHolderListener));
+
+        var resultButton = new Button(composite, SWT.NONE);
+        resultButton.setText("...");
+        resultButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                super.widgetSelected(e);
+                var previouslySelectedPath = DialogUtils.findWorkspaceFile(resultText)
+                    .map(IFile::getFullPath)
+                    .orElse(null);
+                var selectionResult = WorkspaceResourceDialog.openNewFile(parent.getShell(), "Selection of result file",
+                        "Select a destination for the result file.", previouslySelectedPath, Collections.emptyList());
+                if (selectionResult != null) {
+                    resultText.setText(selectionResult.getFullPath()
+                        .toPortableString());
+                }
+
+            }
+        });
+
+        addErrorDetectionForFileHolder(PCMConfidentialityDSLLaunchConfigurationConstants.RESULT_FILE_ATTRIBUTE,
+                resultFileValue);
     }
 
     @Override
@@ -76,12 +146,16 @@ public class PCMConfidentialityDSLLaunchConfigurationTab extends AbstractLaunchC
                 .getLog()
                 .error("Error while initializing launch config with defaults.", e);
         }
+        configuration.setAttribute(PCMConfidentialityDSLLaunchConfigurationConstants.RESULT_FILE_ATTRIBUTE,
+                (String) null);
     }
 
     @Override
     public void initializeFrom(ILaunchConfiguration configuration) {
         try {
-            executeForAllFiles(attr -> setFileInModel(configuration, attr, fileValues.get(attr)));
+            executeForAllFiles(attr -> setFileInModel(configuration, attr, fileValues.get(attr), true));
+            setFileInModel(configuration, PCMConfidentialityDSLLaunchConfigurationConstants.RESULT_FILE_ATTRIBUTE,
+                    resultFileValue, false);
         } catch (CoreException e) {
             Activator.getInstance()
                 .getLog()
@@ -98,6 +172,8 @@ public class PCMConfidentialityDSLLaunchConfigurationTab extends AbstractLaunchC
                 .getLog()
                 .error("Error while applying launch config.", e);
         }
+        setFileInLaunchConfig(configuration, PCMConfidentialityDSLLaunchConfigurationConstants.RESULT_FILE_ATTRIBUTE,
+                resultFileValue);
     }
 
     @Override
@@ -118,6 +194,9 @@ public class PCMConfidentialityDSLLaunchConfigurationTab extends AbstractLaunchC
                         attr);
                 isValid.set(isValid.get() && file != null && file.exists());
             });
+            var resultFile = PCMConfidentialityDSLLaunchConfigurationConstants.getFileFromConfiguration(launchConfig,
+                    PCMConfidentialityDSLLaunchConfigurationConstants.RESULT_FILE_ATTRIBUTE);
+            isValid.set(isValid.get() && resultFile != null);
         } catch (CoreException e) {
             Activator.getInstance()
                 .getLog()
@@ -136,6 +215,10 @@ public class PCMConfidentialityDSLLaunchConfigurationTab extends AbstractLaunchC
             Collection<String> fileExtensions) {
         var valueHolder = fileValues.get(attributeName);
         DialogUtils.createFileSelectionRow(parent, artifactName, valueHolder, fileExtensions);
+        addErrorDetectionForFileHolder(attributeName, valueHolder);
+    }
+
+    protected void addErrorDetectionForFileHolder(String attributeName, IObservableValue<IFile> valueHolder) {
         IValueChangeListener<IFile> valueChangeListener = e -> {
             var newValue = e.diff.getNewValue();
             if (newValue == null) {
@@ -162,10 +245,10 @@ public class PCMConfidentialityDSLLaunchConfigurationTab extends AbstractLaunchC
     }
 
     protected static void setFileInModel(ILaunchConfiguration configuration, String attributeName,
-            IObservableValue<IFile> model) throws CoreException {
+            IObservableValue<IFile> model, boolean mustExist) throws CoreException {
         var foundFile = PCMConfidentialityDSLLaunchConfigurationConstants.getFileFromConfiguration(configuration,
                 attributeName);
-        if (foundFile == null || !foundFile.exists()) {
+        if (foundFile == null || (mustExist && !foundFile.exists())) {
             model.setValue(null);
         } else {
             model.setValue(foundFile);

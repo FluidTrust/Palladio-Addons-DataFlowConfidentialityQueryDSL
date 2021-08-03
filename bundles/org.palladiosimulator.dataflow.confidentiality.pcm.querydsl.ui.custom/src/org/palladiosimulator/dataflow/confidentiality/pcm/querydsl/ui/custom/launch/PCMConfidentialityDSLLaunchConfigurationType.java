@@ -47,12 +47,15 @@ public class PCMConfidentialityDSLLaunchConfigurationType implements ILaunchConf
                 PCMConfidentialityDSLLaunchConfigurationConstants.ALLOCATION_MODEL_FILE_ATTRIBUTE);
         var queryModelURI = getFileURI(configuration,
                 PCMConfidentialityDSLLaunchConfigurationConstants.QUERY_FILE_ATTRIBUTE);
+        var resultFile = PCMConfidentialityDSLLaunchConfigurationConstants.getFileFromConfiguration(configuration,
+                PCMConfidentialityDSLLaunchConfigurationConstants.RESULT_FILE_ATTRIBUTE);
 
         // workflow building
         var job = TransformPCMDFDWithConstraintsToPrologJobBuilder.create()
             .addUsageModelsByURI(usageModelURI)
             .addAllocationModelByURI(allocationModelURI)
             .addDCPDSL(queryModelURI)
+            .setSerializeResultToFile(resultFile)
             .build();
         var exceptionHolder = new CoreException[1];
         var exceptionHandler = new PCMConfidentialityDSLWorkflowExceptionHandler(e -> exceptionHolder[0] = e);

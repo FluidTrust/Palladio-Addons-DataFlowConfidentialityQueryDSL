@@ -16,4 +16,6 @@ Require-Bundle: org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bund
  org.palladiosimulator.dataflow.confidentiality.pcm.querydsl;visibility:=reexport,
  org.palladiosimulator.supporting.prolog.model,
  org.palladiosimulator.dataflow.confidentiality.transformation.dcp.workflow;visibility:=reexport,
- de.sebinside.dcp.dsl
+ de.sebinside.dcp.dsl,
+ org.apache.commons.lang3;bundle-version="3.1.0",
+ org.eclipse.core.resources
