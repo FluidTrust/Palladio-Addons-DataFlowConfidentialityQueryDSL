@@ -1,12 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Workflow
-Bundle-SymbolicName: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow
+Bundle-SymbolicName: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.palladiosimulator.dataflow.confidentiality.transformation.dcp.dsl.pcm.workflow
 Export-Package: org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow,
  org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.impl,
+ org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.internal;x-friends:="org.palladiosimulator.dataflow.confidentiality.transformation.dcp.workflow.tests",
  org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.jobs,
  org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.jobs.impl
 Require-Bundle: org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bundle-version="0.1.0";visibility:=reexport,
@@ -18,4 +19,8 @@ Require-Bundle: org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bund
  org.palladiosimulator.dataflow.confidentiality.transformation.dcp.workflow;visibility:=reexport,
  de.sebinside.dcp.dsl,
  org.apache.commons.lang3;bundle-version="3.1.0",
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ org.prolog4j.manager;bundle-version="1.0.0",
+ org.prolog4j.api;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.internal.Activator

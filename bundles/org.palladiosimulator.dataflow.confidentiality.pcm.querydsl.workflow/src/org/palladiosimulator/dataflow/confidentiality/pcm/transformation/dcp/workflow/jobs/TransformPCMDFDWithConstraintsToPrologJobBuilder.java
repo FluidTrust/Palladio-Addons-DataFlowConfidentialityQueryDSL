@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.util.StringInputStream;
+import org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.internal.Activator;
 import org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.jobs.StringConsumerJob.ThrowingConsumer;
 import org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.jobs.impl.TransformPCMDFDWithConstraintsToPrologJobImpl;
 import org.palladiosimulator.dataflow.confidentiality.pcm.workflow.jobs.TransformPCMDFDToPrologJobBuilder;
@@ -25,6 +26,7 @@ import org.palladiosimulator.dataflow.confidentiality.transformation.workflow.jo
 import org.palladiosimulator.dataflow.confidentiality.transformation.workflow.jobs.SerializeModelToStringJob;
 import org.palladiosimulator.pcm.allocation.Allocation;
 import org.palladiosimulator.pcm.usagemodel.UsageModel;
+import org.prolog4j.IProverFactory;
 
 import de.uka.ipd.sdq.workflow.jobs.IJob;
 import de.uka.ipd.sdq.workflow.mdsd.blackboard.ModelLocation;
@@ -48,6 +50,7 @@ public class TransformPCMDFDWithConstraintsToPrologJobBuilder {
     private boolean serializeConstraintsToString = false;
     private String constraintsResultKey;
     private ThrowingConsumer<String> serializedResultConsumer;
+    private IProverFactory proverFactory;
 
     private TransformPCMDFDToPrologJobBuilder base = new TransformPCMDFDToPrologJobBuilder();
 
@@ -60,6 +63,16 @@ public class TransformPCMDFDWithConstraintsToPrologJobBuilder {
 
     public TransformPCMDFDWithConstraintsToPrologJob<? extends KeyValueMDSDBlackboard> build() {
         Validate.notNull(serializedResultConsumer);
+
+        if (proverFactory == null) {
+            var proverFactories = Activator.getInstance()
+                .getProverManager()
+                .getProvers()
+                .values();
+            Validate.isTrue(!proverFactories.isEmpty());
+            proverFactory = proverFactories.iterator()
+                .next();
+        }
 
         var baseSequence = base.build();
         @SuppressWarnings("unchecked")
@@ -108,7 +121,7 @@ public class TransformPCMDFDWithConstraintsToPrologJobBuilder {
             .toOptionsMap(), DEFAULT_CALLABLE_QUERY_KEY));
 
         jobSequence.add(new RunConstraintsQueryJob<>(TransformPCMDFDToPrologJobBuilder.DEFAULT_PROLOG_KEY,
-                DEFAULT_CONSTRAINTS_KEY, DEFAULT_CALLABLE_QUERY_KEY, DEFAULT_SOLUTION_KEY));
+                DEFAULT_CONSTRAINTS_KEY, DEFAULT_CALLABLE_QUERY_KEY, DEFAULT_SOLUTION_KEY, proverFactory));
 
         jobSequence.add(new CreateResultMappingFromSolutionJob<>(DEFAULT_SOLUTION_KEY, dcpdslLocation,
                 DEFAULT_SERIALIZED_QUERY_RESULT_KEY));
@@ -202,6 +215,11 @@ public class TransformPCMDFDWithConstraintsToPrologJobBuilder {
 
     public TransformPCMDFDWithConstraintsToPrologJobBuilder setSerializeResultHandler(Consumer<String> stringConsumer) {
         this.serializedResultConsumer = s -> stringConsumer.accept(s);
+        return this;
+    }
+    
+    public TransformPCMDFDWithConstraintsToPrologJobBuilder addProverFactory(IProverFactory proverFactory) {
+        this.proverFactory = proverFactory;
         return this;
     }
 }
