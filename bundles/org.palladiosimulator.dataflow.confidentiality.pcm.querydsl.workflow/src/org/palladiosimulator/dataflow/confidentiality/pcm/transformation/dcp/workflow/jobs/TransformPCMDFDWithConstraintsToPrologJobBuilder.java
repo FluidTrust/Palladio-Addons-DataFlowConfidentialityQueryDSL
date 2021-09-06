@@ -51,6 +51,7 @@ public class TransformPCMDFDWithConstraintsToPrologJobBuilder {
     private String constraintsResultKey;
     private ThrowingConsumer<String> serializedResultConsumer;
     private IProverFactory proverFactory;
+    private boolean serializeFlowTree = true;
 
     private TransformPCMDFDToPrologJobBuilder base = new TransformPCMDFDToPrologJobBuilder();
 
@@ -124,7 +125,7 @@ public class TransformPCMDFDWithConstraintsToPrologJobBuilder {
                 DEFAULT_CONSTRAINTS_KEY, DEFAULT_CALLABLE_QUERY_KEY, DEFAULT_SOLUTION_KEY, proverFactory));
 
         jobSequence.add(new CreateResultMappingFromSolutionJob<>(DEFAULT_SOLUTION_KEY, dcpdslLocation,
-                DEFAULT_SERIALIZED_QUERY_RESULT_KEY));
+                DEFAULT_SERIALIZED_QUERY_RESULT_KEY, serializeFlowTree));
 
         jobSequence.add(new StringConsumerJob<>(DEFAULT_SERIALIZED_QUERY_RESULT_KEY, serializedResultConsumer));
 
@@ -220,6 +221,11 @@ public class TransformPCMDFDWithConstraintsToPrologJobBuilder {
     
     public TransformPCMDFDWithConstraintsToPrologJobBuilder addProverFactory(IProverFactory proverFactory) {
         this.proverFactory = proverFactory;
+        return this;
+    }
+    
+    public TransformPCMDFDWithConstraintsToPrologJobBuilder setSerializeFlowTree(boolean serializationFlag) {
+        this.serializeFlowTree = serializationFlag;
         return this;
     }
 }

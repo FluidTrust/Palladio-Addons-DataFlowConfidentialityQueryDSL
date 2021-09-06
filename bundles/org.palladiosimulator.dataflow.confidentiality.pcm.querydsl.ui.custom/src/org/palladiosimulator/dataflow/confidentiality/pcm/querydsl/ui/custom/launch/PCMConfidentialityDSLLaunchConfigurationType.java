@@ -56,6 +56,7 @@ public class PCMConfidentialityDSLLaunchConfigurationType implements ILaunchConf
             .addAllocationModelByURI(allocationModelURI)
             .addDCPDSL(queryModelURI)
             .setSerializeResultToFile(resultFile)
+            .setSerializeFlowTree(false) //TODO remove this after serialization has been fixed
             .build();
         var exceptionHolder = new CoreException[1];
         var exceptionHandler = new PCMConfidentialityDSLWorkflowExceptionHandler(e -> exceptionHolder[0] = e);
