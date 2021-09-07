@@ -8,6 +8,7 @@ import org.palladiosimulator.dataflow.confidentiality.pcm.workflow.TransitiveTra
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.Literal
 
 import static de.sebinside.dcp.dsl.generator.util.PrologUtils.*
+import de.sebinside.dcp.dsl.generator.GlobalConstants.QueryTypes
 
 class PCMDFDConverter extends DFDConverter {
 	
@@ -99,5 +100,12 @@ class PCMDFDConverter extends DFDConverter {
 	override qualifiedNameResolvable(String id) {
 		true
 		//throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+
+	override String convertQueryType(QueryTypes queryType, String variableId) {
+		switch (queryType) {
+			case INPUT_PIN: "input"
+			case OUTPUT_PIN: "output"
+		}
 	}
 }
