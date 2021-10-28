@@ -22,20 +22,32 @@ Model:
 	
 @Override
 PropertySelector:
-	'component.property.' ref=CharacteristicTypeSelector;
+	'component' '.' 'property' '.' ref=CharacteristicTypeSelector;
 
 @Override
 PropertyClassSelector:
-	'component.class.' ref=[base::CharacteristicClass];
+	'component' '.' 'class' '.' ref=[base::CharacteristicClass];
 
 @Override
 NodeIdentitiySelector:
-	'component.name.' name=STRING 
+	'component' '.' 'name' '.' name=STRING 
 	| 
-	'component.identity.' (
-		'Component.' assembly=[composition::AssemblyContext] '.' component=[repository::BasicComponent] |
-		'Action.' action=[seff::AbstractAction] |
-		'SEFF.' assembly=[composition::AssemblyContext] '.' component=[repository::BasicComponent] '.' signature=[repository::OperationSignature] |
-		'UserAction.' userAction=[usagemodel::EntryLevelSystemCall] |
-		'Store.' assembly=[composition::AssemblyContext] '.' store=[pcmConfRepository::OperationalDataStoreComponent])
+	'component' '.' 'identity' '.' (
+		'Component' '.' assembly=[composition::AssemblyContext] '.' component=[repository::BasicComponent] |
+		'Action' '.' action=[seff::AbstractAction] |
+		'SEFF' '.' assembly=[composition::AssemblyContext] '.' component=[repository::BasicComponent] '.' signature=[repository::OperationSignature] |
+		'UserAction' '.' userAction=[usagemodel::EntryLevelSystemCall] |
+		'Store' '.' assembly=[composition::AssemblyContext] '.' store=[pcmConfRepository::OperationalDataStoreComponent])
 	;
+
+@Override
+DestinationSelector:
+	PropertySelector | PropertyClassSelector | NodeIdentitiySelector | NodeTypeSelectorForArchitecture;
+
+NodeTypeSelectorForArchitecture:
+	'node' '.' 'type' '.' type=ElementType
+;
+
+enum ElementType:
+	COMPONENT = 'Component' | ACTION = 'Action' | SEFF = 'SEFF' | USERACTION = 'UserAction' | STORE = 'Store'
+;

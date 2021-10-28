@@ -6,6 +6,7 @@ import org.eclipse.xtext.serializer.ISerializer
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.PCMDFDConstraintLanguageStandaloneSetup
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.internal.QuerydslActivator
 import org.palladiosimulator.dataflow.confidentiality.transformation.dcp.resultmapping.Violation
+import java.util.Optional
 
 class PlainTextResultMappingSerializer extends org.palladiosimulator.dataflow.confidentiality.transformation.dcp.resultmapping.serialize.PlainTextResultMappingSerializer {
 
@@ -16,7 +17,7 @@ class PlainTextResultMappingSerializer extends org.palladiosimulator.dataflow.co
     override ISerializer createDSLSerializer() {
         var Injector injector = null;
         try {
-            injector = QuerydslActivator.getInstance().getInjector(QuerydslActivator.ORG_PALLADIOSIMULATOR_DATAFLOW_CONFIDENTIALITY_PCM_QUERYDSL_PCMDFDCONSTRAINTLANGUAGE);
+            injector = Optional.ofNullable(QuerydslActivator.getInstance()).map[activator | activator.getInjector(QuerydslActivator.ORG_PALLADIOSIMULATOR_DATAFLOW_CONFIDENTIALITY_PCM_QUERYDSL_PCMDFDCONSTRAINTLANGUAGE)].orElseThrow[new NoClassDefFoundError()]
         } catch (NoClassDefFoundError e) {
             injector = new PCMDFDConstraintLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
         }

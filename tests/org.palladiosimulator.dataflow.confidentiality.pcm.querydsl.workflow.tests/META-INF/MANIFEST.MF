@@ -4,7 +4,7 @@ Bundle-Name: Tests
 Bundle-SymbolicName: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Automatic-Module-Name: org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.tests
+Automatic-Module-Name: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow.tests
 Require-Bundle: com.google.guava,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtend.lib,
@@ -31,6 +31,7 @@ Require-Bundle: com.google.guava,
  org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bundle-version="0.1.0",
  org.palladiosimulator.dataflow.confidentiality.transformation.prolog,
  org.palladiosimulator.dataflow.confidentiality.transformation.dcp.workflow,
- de.sebinside.dcp.dsl;bundle-version="1.0.0"
+ de.sebinside.dcp.dsl;bundle-version="1.0.0",
+ org.apache.commons.lang3;bundle-version="3.1.0"
 Import-Package: org.junit;version="4.12.0",
  org.junit.jupiter.api;version="5.0.0"

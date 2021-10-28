@@ -1,9 +1,0 @@
-target PCMDFD using CharacteristicTypeDictionary
-import "CharacteristicTypeDictionary.xmi"
-
-type allowedRoles:AllowedRoles
-type ownedRoles:OwnedRoles
-
-constraint RBAC {
-	data.attribute.allowedRoles.$authRoles{} NEVER FLOWS component.property.ownedRoles.$compRoles{} WHERE isEmpty(intersection(authRoles,compRoles))
-}

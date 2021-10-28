@@ -24,7 +24,7 @@ public class PCMDCPDSLStandaloneUtil {
                 .registerProjectURI(ProfileConstants.class,
                         "org.palladiosimulator.dataflow.confidentiality.pcm.model.profile")
                 .registerProjectURI(PCMDCPDSLStandaloneUtil.class,
-                        "org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.tests") 
+                        "org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow.tests") 
                 .addCustomTask(new Log4jInitilizationTask())
                 .addCustomTask(PrologStandaloneSetup::doSetup)
                 .addCustomTask(PCMDFDConstraintLanguageStandaloneSetup::doSetup)
@@ -40,7 +40,7 @@ public class PCMDCPDSLStandaloneUtil {
     }
 
     public static URI getRelativeURI(String relativePath) {
-        return URI.createPlatformPluginURI("/org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.tests/models/" + relativePath, false);
+        return URI.createPlatformPluginURI("/org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow.tests/models/" + relativePath, false);
     }
 
 }
