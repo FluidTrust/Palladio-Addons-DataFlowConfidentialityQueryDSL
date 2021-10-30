@@ -3,8 +3,7 @@
  */
 package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.generator
 
-import de.sebinside.dcp.dsl.dSL.CharacteristicClass
-import de.sebinside.dcp.dsl.dSL.Constraint
+import de.sebinside.dcp.dsl.dSL.GlobalConstantDefinition
 import de.sebinside.dcp.dsl.dSL.Rule
 import de.sebinside.dcp.dsl.dSL.TargetModelTypeDef
 import de.sebinside.dcp.dsl.generator.DSLGenerator
@@ -16,7 +15,6 @@ import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.converter.PCM
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.Model
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.queryrule.PCMDFDInputPinQueryRule
 import org.palladiosimulator.dataflow.confidentiality.pcm.workflow.TransitiveTransformationTrace
-import org.palladiosimulator.supporting.prolog.model.prolog.PrologFactory
 
 /**
  * Generates code from your model files on save.
@@ -32,41 +30,21 @@ class PCMDFDConstraintLanguageGenerator extends DSLGenerator {
 		// intentionally empty, so the editor does not try to generate a output
 	}
 	
-	def generateFromModel(Model model) { // potentially not necessary, but could be usefull to differentiate the two DSLs
-		val program = PrologFactory.eINSTANCE.createProgram
-		model.targetModelType.compile
-		
-		for (charClass : model.elements.filter(CharacteristicClass)) {
-			program.clauses.addAll(charClass.compile)
-		}
-		
-		for (constraint : model.elements.filter(Constraint)) {
-			program.clauses.addAll(constraint.compile)
-		}
-		
-		program
+	def generateFromModel(Model model) {
+		super.generateFromModel(model as de.sebinside.dcp.dsl.dSL.Model)
 	}
 
 	override compile(TargetModelTypeDef typeDefs) {
-		// There is only one or none target model type definition
-//		this.targetModelType = typeDefs.type
-		
-//		switch this.targetModelType {
-//			case "PCMDFD": { 
-				if(transitiveTransformationTrace === null) {
-						throw new Exception("No valid trace for DFD!")
-				}
-				this.pcmDFDConverter = new PCMDFDConverter(transitiveTransformationTrace)
-				this.converter = this.pcmDFDConverter
-//				} 
-//			case "DFD": super.compile(typeDefs)
-//			default: throw new Exception("No valid type definition given!")
-//		}
+		if(transitiveTransformationTrace === null) {
+				throw new Exception("No valid trace for DFD!")
+		}
+		this.pcmDFDConverter = new PCMDFDConverter(transitiveTransformationTrace)
+		this.converter = this.pcmDFDConverter
 	}
 	
-	override generateRule(Rule mainRule, String constraintName, Converter converter) {
+	override generateRule(Rule mainRule, String constraintName, Converter converter, Iterable<GlobalConstantDefinition> globalConstants) {
 		var inputRule = new PCMDFDInputPinQueryRule(mainRule, constraintName, pcmDFDConverter)
-		inputRule.generate()
+		inputRule.generate(globalConstants)
 	}
 	
 	def setTransitiveTransformationTrace(TransitiveTransformationTrace trace) {
