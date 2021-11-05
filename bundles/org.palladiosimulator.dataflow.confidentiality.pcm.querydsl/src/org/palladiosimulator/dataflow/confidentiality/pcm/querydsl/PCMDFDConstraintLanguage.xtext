@@ -41,7 +41,7 @@ NodeIdentitiySelector:
 	;
 
 @Override
-DestinationSelector:
+NodeSelector:
 	PropertySelector | PropertyClassSelector | NodeIdentitiySelector | NodeTypeSelectorForArchitecture;
 
 NodeTypeSelectorForArchitecture:
