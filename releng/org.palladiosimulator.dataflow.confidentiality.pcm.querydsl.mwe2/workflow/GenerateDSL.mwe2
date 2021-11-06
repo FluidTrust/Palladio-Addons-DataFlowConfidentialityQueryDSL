@@ -102,6 +102,9 @@ Workflow {
 		registerGenModelFile = "platform:/resource/de.uka.ipd.sdq.units/model/Units.genmodel"
 		registerGenModelFile = "platform:/resource/org.palladiosimulator.dataflow.confidentiality.pcm.model/model/dataFlowConfidentiality.genmodel"
 		registerGenModelFile = "platform:/resource/de.sebinside.dcp.dsl/model/generated/DSL.genmodel"
+		
+		registerEcoreFile = "platform:/resource/org.palladiosimulator.dataflow.diagram.characterized/model/DataFlowDiagramCharacterized.ecore"
+		registerEcoreFile = "platform:/resource/org.palladiosimulator.dataflow.dictionary.characterized/model/DataDictionaryCharacterized.ecore"
 	}
 	
 	component = XtextGenerator {
