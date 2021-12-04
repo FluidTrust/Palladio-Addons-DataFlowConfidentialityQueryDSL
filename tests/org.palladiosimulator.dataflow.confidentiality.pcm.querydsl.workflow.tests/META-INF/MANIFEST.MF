@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests
 Bundle-SymbolicName: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow.tests
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 5.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow.tests
 Require-Bundle: com.google.guava,
@@ -27,7 +27,7 @@ Require-Bundle: com.google.guava,
  org.palladiosimulator.dataflow.confidentiality.pcm.model.profile,
  org.palladiosimulator.dataflow.confidentiality.pcm.resources,
  org.palladiosimulator.dataflow.confidentiality.pcm.testmodels,
- org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow;bundle-version="1.0.0",
+ org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow;bundle-version="5.1.0",
  org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bundle-version="0.1.0",
  org.palladiosimulator.dataflow.confidentiality.transformation.prolog,
  org.palladiosimulator.dataflow.confidentiality.transformation.dcp.workflow,

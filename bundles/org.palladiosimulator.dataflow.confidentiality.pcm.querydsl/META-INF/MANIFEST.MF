@@ -3,7 +3,7 @@ Automatic-Module-Name: org.palladiosimulator.dataflow.confidentiality.pcm.queryd
 Bundle-ManifestVersion: 2
 Bundle-Name: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl
 Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 5.1.0.qualifier
 Bundle-SymbolicName: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext,
@@ -27,7 +27,7 @@ Require-Bundle: org.eclipse.xtext,
  org.palladiosimulator.dataflow.confidentiality.transformation.prolog,
  org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bundle-version="0.1.0",
  org.palladiosimulator.dataflow.confidentiality.pcm.transformation;bundle-version="1.0.0",
- org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.mwe2;bundle-version="5.0.0";resolution:=optional
+ org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.mwe2;bundle-version="5.1.0";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage,
  org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.impl,

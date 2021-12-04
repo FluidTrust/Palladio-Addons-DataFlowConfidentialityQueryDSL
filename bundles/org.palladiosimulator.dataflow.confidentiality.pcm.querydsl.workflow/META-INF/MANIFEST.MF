@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Workflow
 Bundle-SymbolicName: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.workflow;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 5.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.palladiosimulator.dataflow.confidentiality.transformation.dcp.dsl.pcm.workflow
 Export-Package: org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow,
@@ -22,6 +22,6 @@ Require-Bundle: org.palladiosimulator.dataflow.confidentiality.pcm.workflow;bund
  org.eclipse.core.resources,
  org.prolog4j.manager;bundle-version="1.0.0",
  org.prolog4j.api;bundle-version="1.0.0",
- org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.resultmapping;bundle-version="1.0.0"
+ org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.resultmapping;bundle-version="5.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.palladiosimulator.dataflow.confidentiality.pcm.transformation.dcp.workflow.internal.Activator

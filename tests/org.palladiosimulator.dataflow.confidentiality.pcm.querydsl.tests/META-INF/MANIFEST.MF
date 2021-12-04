@@ -3,7 +3,7 @@ Automatic-Module-Name: org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pc
 Bundle-ManifestVersion: 2
 Bundle-Name: org.palladiosimulator.dataflow.confidentiality.dcp.dsl.pcm.tests
 Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 5.1.0.qualifier
 Bundle-SymbolicName: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.tests;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.palladiosimulator.dataflow.confidentiality.pcm.querydsl,
