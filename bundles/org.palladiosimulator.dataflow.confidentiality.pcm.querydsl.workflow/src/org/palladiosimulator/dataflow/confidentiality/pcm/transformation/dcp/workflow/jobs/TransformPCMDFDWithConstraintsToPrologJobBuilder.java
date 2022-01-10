@@ -33,7 +33,8 @@ import de.uka.ipd.sdq.workflow.mdsd.blackboard.SavePartitionToDiskJob;
 
 public class TransformPCMDFDWithConstraintsToPrologJobBuilder {
 
-    private static final ModelLocation DEFAULT_DCPDSL_LOCATION = new ModelLocation("dfd",
+    private static final ModelLocation DEFAULT_DCPDSL_LOCATION = new ModelLocation(
+            TransformPCMDFDToPrologJobBuilder.DEFAULT_PCM_INPUT_PARTITION_ID,
             URI.createFileURI("tmp/constaints.DCPDSL"));
     private static final ModelLocation DEFAULT_CONSTRAINTS_LOCATION = new ModelLocation("constraints",
             URI.createFileURI("tmp/constraints.pl"));
