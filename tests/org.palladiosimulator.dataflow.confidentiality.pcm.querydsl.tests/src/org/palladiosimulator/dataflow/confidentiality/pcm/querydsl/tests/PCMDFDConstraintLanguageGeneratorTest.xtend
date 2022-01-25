@@ -17,7 +17,6 @@ import org.eclipse.xtext.testing.extensions.InjectionExtension
 import org.eclipse.xtext.util.StringInputStream
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.^extension.ExtendWith
 import org.mockito.invocation.InvocationOnMock
@@ -32,7 +31,6 @@ import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCha
 import tools.mdsd.library.standalone.initialization.StandaloneInitializerBuilder
 
 import static org.junit.jupiter.api.Assertions.*
-import static org.mockito.ArgumentMatchers.*
 import static org.mockito.Mockito.*
 
 @ExtendWith(InjectionExtension)
@@ -174,20 +172,34 @@ class PCMDFDConstraintLanguageGeneratorTest {
 	}
 	
 	@Test
-	@Disabled
 	def void testMACNeedToKnow() {
 		runTest('''
-				type Compartment : Compartment
-				type NeedToKnow : "Need to Know"
+				type Compartment : Compartments
+				type NeedToKnow : NeedsToKnow
 				constraint ActorProcessTest {
 					data.attribute.Compartment.$COMP{} NEVER FLOWS element.type.UserAction & element.property.NeedToKnow.$NTK{}
 					WHERE !isEmpty(subtract(COMP, NTK))
 				}
 			''',
-		"tbd",
+		"HealthRecord_CallReturn_MAC_NTK/characteristicTypes.characteristics",
 		'''
-				tbd
-			'''
+			constraint_ActorProcessTest(ConstraintName, QueryType, N, PIN, S, VarSet_NTK, VarSet_COMP) :-
+				ConstraintName = 'ActorProcessTest',
+				constraint_ActorProcessTest_InputPin(QueryType, N, PIN, S, VarSet_NTK, VarSet_COMP).
+			constraint_ActorProcessTest_InputPin(QueryType, N, PIN, S, VarSet_NTK, VarSet_COMP) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				(
+					containedInScenarioBehaviour(N),
+					findall(R, nodeCharacteristic(N, 'NeedsToKnow (_z02RgX1HEeySLaOi7Opbhw)', R), VarSet_NTK)
+				),
+				findall(V, characteristic(N, PIN, 'Compartments (_0R6oAX1HEeySLaOi7Opbhw)', V, S), VarSet_COMP),
+				(
+					subtract(VarSet_COMP, VarSet_NTK, Temp_0),
+					\+ length(Temp_0, 0)
+				).
+		'''
 		)
 	}
 	
