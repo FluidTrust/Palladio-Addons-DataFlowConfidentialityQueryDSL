@@ -21,7 +21,11 @@ public class PCMDFDConstraintLanguageStandaloneSetup extends PCMDFDConstraintLan
 	public void register(Injector injector) {
 		super.register(injector);
 
+		var extensionToFactoryMap = IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap();
 		IResourceServiceProvider serviceProvider = injector.getInstance(GenericResourceServiceProvider.class);
-		IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap().put("characteristics", serviceProvider);
+		extensionToFactoryMap.put("characteristics", serviceProvider);
+		extensionToFactoryMap.put("repository", serviceProvider);
+		extensionToFactoryMap.put("system", serviceProvider);
+		extensionToFactoryMap.put("usagemodel", serviceProvider);
 	}
 }

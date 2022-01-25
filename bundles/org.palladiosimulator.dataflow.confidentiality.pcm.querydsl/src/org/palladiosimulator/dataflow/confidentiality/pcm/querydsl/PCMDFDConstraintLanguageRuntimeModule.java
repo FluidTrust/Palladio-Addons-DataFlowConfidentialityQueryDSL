@@ -3,23 +3,30 @@
  */
 package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl;
 
+import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.scoping.IGlobalScopeProvider;
 
-import de.sebinside.dcp.dsl.ExtendedResourceDescriptionStrategy;
+import de.sebinside.dcp.dsl.DSLValueConverter;
 import de.sebinside.dcp.dsl.scoping.ImportReadyGlobalScopeProvider;
 
 /**
- * Use this class to register components to be used at runtime / without the Equinox extension registry.
+ * Use this class to register components to be used at runtime / without the Equinox extension
+ * registry.
  */
 public class PCMDFDConstraintLanguageRuntimeModule extends AbstractPCMDFDConstraintLanguageRuntimeModule {
-	
-	public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy() {
-		return ExtendedResourceDescriptionStrategy.class;
-	}
 
-	@Override
-	public Class<? extends IGlobalScopeProvider> bindIGlobalScopeProvider() {
-		return ImportReadyGlobalScopeProvider.class;
-	}
+    public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy() {
+        return ExtendedResourceDescriptionStrategy.class;
+    }
+
+    @Override
+    public Class<? extends IGlobalScopeProvider> bindIGlobalScopeProvider() {
+        return ImportReadyGlobalScopeProvider.class;
+    }
+
+    @Override
+    public Class<? extends IValueConverterService> bindIValueConverterService() {
+        return DSLValueConverter.class;
+    }
 }

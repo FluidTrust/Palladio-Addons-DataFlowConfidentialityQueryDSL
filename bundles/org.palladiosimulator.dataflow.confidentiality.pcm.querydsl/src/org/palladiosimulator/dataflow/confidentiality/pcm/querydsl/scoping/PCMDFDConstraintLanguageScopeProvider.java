@@ -3,17 +3,36 @@
  */
 package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.scoping;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
+import org.eclipse.xtext.scoping.impl.FilteringScope;
+import org.eclipse.xtext.scoping.impl.ImportNormalizer;
+import org.eclipse.xtext.scoping.impl.ImportScope;
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.PCMDFDConstraintLanguagePackage;
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.SEFFNodeIdentitySelector;
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.StoreNodeIdentitySelector;
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.CharacteristicType;
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.EnumCharacteristicType;
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.Enumeration;
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.Literal;
+import org.palladiosimulator.pcm.core.composition.AssemblyContext;
+import org.palladiosimulator.pcm.core.composition.CompositionPackage;
+import org.palladiosimulator.pcm.core.entity.Entity;
+import org.palladiosimulator.pcm.repository.BasicComponent;
+import org.palladiosimulator.pcm.repository.OperationInterface;
+import org.palladiosimulator.pcm.repository.OperationProvidedRole;
+import org.palladiosimulator.pcm.repository.OperationSignature;
+import org.palladiosimulator.pcm.repository.RepositoryPackage;
+import org.palladiosimulator.pcm.seff.ServiceEffectSpecification;
 
 import de.sebinside.dcp.dsl.dSL.CharacteristicTypeSelector;
 import de.sebinside.dcp.dsl.dSL.DSLPackage;
@@ -21,87 +40,123 @@ import de.sebinside.dcp.dsl.dSL.DSLPackage;
 /**
  * This class contains custom scoping description.
  * 
- * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping
- * on how and when to use it.
+ * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping on how and when
+ * to use it.
  */
 public class PCMDFDConstraintLanguageScopeProvider extends AbstractPCMDFDConstraintLanguageScopeProvider {
 
-	@Override
-	public IScope getScope(EObject context, EReference reference) {
-		
+    @Override
+    public IScope getScope(EObject context, EReference reference) {
 
-		if (context instanceof CharacteristicTypeSelector
-				&& reference == DSLPackage.Literals.CHARACTERISTIC_TYPE_SELECTOR__LITERALS) {
+        if (context instanceof CharacteristicTypeSelector
+                && reference == DSLPackage.Literals.CHARACTERISTIC_TYPE_SELECTOR__LITERALS) {
+            return getLiteralsScope(context, reference);
+        }
 
-			CharacteristicType type = ((CharacteristicTypeSelector) context).getRef().getRef();
+        if (context instanceof StoreNodeIdentitySelector
+                && reference == PCMDFDConstraintLanguagePackage.Literals.STORE_NODE_IDENTITY_SELECTOR__ASSEMBLIES) {
+            return getAssemblyContextHierarchyScope(context, reference);
+        }
 
-			// Assumption: The DSL is intended to only work with EnumCharacteristicType
-			if (type instanceof EnumCharacteristicType) {
-				EnumCharacteristicType enumType = (EnumCharacteristicType) type;
-				Enumeration literalEnumeration = enumType.getType();
+        if (context instanceof SEFFNodeIdentitySelector
+                && reference == PCMDFDConstraintLanguagePackage.Literals.SEFF_NODE_IDENTITY_SELECTOR__ASSEMBLIES) {
+            return getAssemblyContextHierarchyScope(context, reference);
+        }
 
-				// This is the case if the characteristic type is invalid referenced
-				if (literalEnumeration != null) {
-					List<Literal> literals = literalEnumeration.getLiterals();
+        if (context instanceof SEFFNodeIdentitySelector
+                && reference == PCMDFDConstraintLanguagePackage.Literals.SEFF_NODE_IDENTITY_SELECTOR__SIGNATURE) {
+            return getSignatureForSEFFScope((SEFFNodeIdentitySelector) context, reference);
+        }
 
-					IScope scope = Scopes.scopeFor(literals, literal -> QualifiedName.create(literal.getName()),
-							IScope.NULLSCOPE);
+        return super.getScope(context, reference);
+    }
 
-					return scope;
-				}
-			}
-			return super.getScope(context, reference);
-		}
+    protected IScope getLiteralsScope(EObject context, EReference reference) {
+        CharacteristicType type = ((CharacteristicTypeSelector) context).getRef()
+            .getRef();
 
-//		if (context instanceof NodeIdentitiySelector
-//				&& reference == DSLPackage.Literals.NODE_IDENTITIY_SELECTOR__COMPONENT) {
-//
-//			AssemblyContext assemblyContext = ((NodeIdentitiySelector) context).getAssembly();
-//			RepositoryComponent repositoryComponent = assemblyContext.getEncapsulatedComponent__AssemblyContext();
-//			
-//			// Assumption: The DSL is intended to only work with BasicComponents
-//			if (repositoryComponent instanceof BasicComponent) {
-//				BasicComponent component = (BasicComponent) repositoryComponent;
-//				List<BasicComponent> componentList = new ArrayList<BasicComponent>();
-//				componentList.add(component);
-//
-//				return Scopes.scopeFor(componentList, c -> QualifiedName.create(c.getEntityName()), IScope.NULLSCOPE);
-//			}
-//			return super.getScope(context, reference);
-//		}
-		
-//		if (context instanceof NodeIdentitiySelector
-//				&& reference == DSLPackage.Literals.NODE_IDENTITIY_SELECTOR__STORE) {
-//
-//			AssemblyContext assemblyContext = ((NodeIdentitiySelector) context).getAssembly();
-//			RepositoryComponent repositoryComponent = assemblyContext.getEncapsulatedComponent__AssemblyContext();
-//			
-//			// Assumption: The DSL is intended to only work with BasicComponents
-//			if (repositoryComponent instanceof OperationalDataStoreComponent) {
-//				OperationalDataStoreComponent component = (OperationalDataStoreComponent) repositoryComponent;
-//				List<OperationalDataStoreComponent> componentList = new ArrayList<OperationalDataStoreComponent>();
-//				componentList.add(component);
-//
-//				return Scopes.scopeFor(componentList, c -> QualifiedName.create(c.getEntityName()), IScope.NULLSCOPE);
-//			}
-//			return super.getScope(context, reference);
-//		}
-		
-//		if (context instanceof NodeIdentitiySelector
-//				&& reference == DSLPackage.Literals.NODE_IDENTITIY_SELECTOR__SIGNATURE) {
-//
-//			BasicComponent component = ((NodeIdentitiySelector) context).getComponent();
-//
-//			// This is the case if the component is invalid referenced
-//			if (component != null) {
-//				List<ServiceEffectSpecification> seffs = component.getServiceEffectSpecifications__BasicComponent();
-//
-//				return Scopes.scopeFor(seffs,
-//						seff -> QualifiedName.create(seff.getDescribedService__SEFF().getEntityName()),
-//						IScope.NULLSCOPE);
-//			}
-//		}
+        // Assumption: The DSL is intended to only work with EnumCharacteristicType
+        if (type instanceof EnumCharacteristicType) {
+            EnumCharacteristicType enumType = (EnumCharacteristicType) type;
+            Enumeration literalEnumeration = enumType.getType();
 
-		return super.getScope(context, reference);
-	}
+            // This is the case if the characteristic type is invalid referenced
+            if (literalEnumeration != null) {
+                List<Literal> literals = literalEnumeration.getLiterals();
+
+                IScope scope = Scopes.scopeFor(literals, literal -> QualifiedName.create(literal.getName()),
+                        IScope.NULLSCOPE);
+
+                return scope;
+            }
+        }
+        return super.getScope(context, reference);
+    }
+
+    protected IScope getSignatureForSEFFScope(SEFFNodeIdentitySelector context, EReference reference) {
+        var superScope = super.getScope(context, reference);
+        var selector = (SEFFNodeIdentitySelector) context;
+        var assemblies = selector.getAssemblies();
+        if (assemblies.isEmpty()) {
+            return superScope;
+        }
+
+        var lastAssembly = assemblies.get(assemblies.size() - 1);
+        var encapsulatedComponent = lastAssembly.getEncapsulatedComponent__AssemblyContext();
+        if (!(encapsulatedComponent instanceof BasicComponent)) {
+            return IScope.NULLSCOPE;
+        }
+
+        var basicComponent = (BasicComponent) encapsulatedComponent;
+
+        var signatureNameNormalizers = basicComponent.getProvidedRoles_InterfaceProvidingEntity()
+            .stream()
+            .filter(OperationProvidedRole.class::isInstance)
+            .map(OperationProvidedRole.class::cast)
+            .map(OperationProvidedRole::getProvidedInterface__OperationProvidedRole)
+            .map(OperationInterface::getEntityName)
+            .map(QualifiedName::create)
+            .map(name -> new ImportNormalizer(name, true, false))
+            .collect(Collectors.toList());
+        var interfaceImportingScope = new ImportScope(signatureNameNormalizers, superScope, null,
+                RepositoryPackage.Literals.OPERATION_SIGNATURE, false);
+
+        var seffs = ((BasicComponent) encapsulatedComponent).getServiceEffectSpecifications__BasicComponent();
+        var signatureCandidates = seffs.stream()
+            .map(ServiceEffectSpecification::getDescribedService__SEFF)
+            .filter(OperationSignature.class::isInstance)
+            .map(OperationSignature.class::cast)
+            .collect(Collectors.toList());
+        return new FilteringScope(interfaceImportingScope, d -> signatureCandidates.contains(d.getEObjectOrProxy()));
+    }
+
+    protected IScope getAssemblyContextHierarchyScope(EObject selector, EReference reference) {
+        var referenceValue = selector.eGet(reference, false);
+        if (!(referenceValue instanceof InternalEList<?>)) {
+            throw new IllegalArgumentException(
+                    "The list containing the assembly contexts is not of the expected type.");
+        }
+        // we need the InternalEList because we have to iterate over the contents of the list
+        // without triggering the resolution of the list contents
+        @SuppressWarnings("unchecked")
+        var assemblyList = (InternalEList<AssemblyContext>) selector.eGet(reference, false);
+        var superScope = super.getScope(selector, reference);
+        var resolvedAssemblies = new ArrayList<AssemblyContext>();
+        for (var assemblyIter = assemblyList.basicListIterator(); assemblyIter.hasNext();) {
+            var assembly = assemblyIter.next();
+            if (assembly.eIsProxy()) {
+                break;
+            }
+            resolvedAssemblies.add(assembly);
+        }
+        var assemblyNames = resolvedAssemblies.stream()
+            .map(Entity::getEntityName)
+            .collect(Collectors.toList());
+        if (assemblyNames.isEmpty()) {
+            return superScope;
+        }
+        var importedName = QualifiedName.create(assemblyNames);
+        var normalizerList = Arrays.asList(new ImportNormalizer(importedName, true, false));
+        return new ImportScope(normalizerList, superScope, null, CompositionPackage.Literals.ASSEMBLY_CONTEXT, false);
+    }
 }

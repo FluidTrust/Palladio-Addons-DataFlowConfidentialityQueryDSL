@@ -452,6 +452,12 @@
 	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
 		<resourceServiceProvider
 			class="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.PCMDFDConstraintLanguageExecutableExtensionFactory:org.eclipse.xtext.resource.generic.GenericResourceServiceProvider"
+			uriExtension="repository">
+		</resourceServiceProvider>
+	</extension>
+	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
+		<resourceServiceProvider
+			class="org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.ui.PCMDFDConstraintLanguageExecutableExtensionFactory:org.eclipse.xtext.resource.generic.GenericResourceServiceProvider"
 			uriExtension="characteristics">
 		</resourceServiceProvider>
 	</extension>

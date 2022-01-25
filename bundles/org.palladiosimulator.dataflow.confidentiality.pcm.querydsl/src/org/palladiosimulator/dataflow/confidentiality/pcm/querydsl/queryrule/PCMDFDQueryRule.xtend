@@ -6,6 +6,8 @@ import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.converter.PCM
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.NodeTypeSelectorForArchitecture
 
 import static de.sebinside.dcp.dsl.generator.util.PrologUtils.*
+import static de.sebinside.dcp.dsl.generator.util.DSLGeneratorUtils.*
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.NodeIdentitiySelector
 
 abstract class PCMDFDQueryRule extends QueryRule {
 	
@@ -26,6 +28,14 @@ abstract class PCMDFDQueryRule extends QueryRule {
 			}
 		}
 		#[term]
+	}
+	
+	def dispatch generateNodeSelectorTerm(NodeIdentitiySelector selector, String nodeName) {
+		val identifiers = converter.convert(selector)
+		if (identifiers.isEmpty) {
+			throw new IllegalStateException("Could not find the selected node identity in the trace.")
+		}
+		#[expressionsToLogicalOr(identifiers.map[i|Unification(CompoundTerm(nodeName), i)])]
 	}
 
 }

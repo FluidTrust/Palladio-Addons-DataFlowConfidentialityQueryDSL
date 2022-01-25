@@ -19,7 +19,7 @@ import "platform:/resource/org.palladiosimulator.pcm/model/pcm.ecore#//seff" as 
 @Override
 Model:
 	(elements+=AbstractElement)*;
-	
+
 @Override
 PropertySelector:
 	'element' '.' 'property' '.' ref=CharacteristicTypeSelector;
@@ -30,15 +30,23 @@ PropertyClassSelector:
 
 @Override
 NodeIdentitiySelector:
-	'element' '.' 'name' '.' name=STRING 
-	| 
-	'element' '.' 'identity' '.' (
-		'Component' '.' assembly=[composition::AssemblyContext] '.' component=[repository::BasicComponent] |
-		'Action' '.' action=[seff::AbstractAction] |
-		'SEFF' '.' assembly=[composition::AssemblyContext] '.' component=[repository::BasicComponent] '.' signature=[repository::OperationSignature] |
-		'UserAction' '.' userAction=[usagemodel::EntryLevelSystemCall] |
-		'Store' '.' assembly=[composition::AssemblyContext] '.' store=[pcmConfRepository::OperationalDataStoreComponent])
-	;
+	NameNodeIdentitySelector | SEFFNodeIdentitySelector | UserActionNodeIdentitySelector | StoreNodeIdentitySelector;
+
+NameNodeIdentitySelector:
+	'element' '.' 'name' '.' name=STRING
+;
+
+SEFFNodeIdentitySelector:
+	'element' '.' 'identity' '.' 'SEFF' '.' assemblies+=[composition::AssemblyContext|StringOrId] ('.' assemblies+=[composition::AssemblyContext|StringOrId])* '.' signature=[repository::OperationSignature|StringOrId]
+;
+
+UserActionNodeIdentitySelector:
+	'element' '.' 'identity' '.' 'UserAction' '.' userAction=[usagemodel::EntryLevelSystemCall|StringOrId]
+;
+
+StoreNodeIdentitySelector:
+	'element' '.' 'identity' '.' 'Store' '.' assemblies+=[composition::AssemblyContext|StringOrId] ('.' assemblies+=[composition::AssemblyContext|StringOrId])*
+;
 
 @Override
 NodeSelector:

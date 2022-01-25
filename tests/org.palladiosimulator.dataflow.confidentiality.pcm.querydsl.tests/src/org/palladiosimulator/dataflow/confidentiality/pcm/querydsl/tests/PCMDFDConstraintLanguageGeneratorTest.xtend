@@ -2,8 +2,10 @@ package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.tests
 
 import com.google.inject.Inject
 import com.google.inject.Provider
+import de.uka.ipd.sdq.identifier.Identifier
 import java.io.ByteArrayOutputStream
 import java.util.Collection
+import java.util.Stack
 import java.util.UUID
 import java.util.function.Predicate
 import org.eclipse.emf.common.util.URI
@@ -28,9 +30,12 @@ import org.palladiosimulator.dataflow.confidentiality.pcm.testmodels.Activator
 import org.palladiosimulator.dataflow.confidentiality.pcm.workflow.TransitiveTransformationTrace
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.CharacteristicType
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.Literal
+import org.palladiosimulator.pcm.core.entity.Entity
 import tools.mdsd.library.standalone.initialization.StandaloneInitializerBuilder
+import tools.mdsd.library.standalone.initialization.emfprofiles.EMFProfileInitializationTask
 
 import static org.junit.jupiter.api.Assertions.*
+import static org.mockito.ArgumentMatchers.*
 import static org.mockito.Mockito.*
 
 @ExtendWith(InjectionExtension)
@@ -50,7 +55,9 @@ class PCMDFDConstraintLanguageGeneratorTest {
 	@BeforeAll
 	static def void init() {
 		StandaloneInitializerBuilder.builder.registerProjectURI(Activator,
-			"org.palladiosimulator.dataflow.confidentiality.pcm.testmodels").build.init
+			"org.palladiosimulator.dataflow.confidentiality.pcm.testmodels").addCustomTask(
+			new EMFProfileInitializationTask("org.palladiosimulator.dataflow.confidentiality.pcm.model.profile",
+				"profile.emfprofile_diagram")).build.init
 	}
 
 	@BeforeEach
@@ -357,12 +364,91 @@ class PCMDFDConstraintLanguageGeneratorTest {
 		)
 	}
 	
+	@Test
+	def void testIdentitySelectorStore() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.identity.Store.Assembly_Airline.Assembly_FlightDB
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#["newUsageModel.usagemodel", "newSystem.system", "newRepository.repository"],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				(
+					N = 'Assembly_Airline.Assembly_FlightDB (_N-cZEDluEeunY9-OetIYyA)_0';
+					N = 'Assembly_Airline.Assembly_FlightDB (_N-cZEDluEeunY9-OetIYyA)_1'
+				).
+			'''
+		)
+	}
+
+	@Test
+	def void testIdentitySelectorSEFF() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.identity.SEFF.Assembly_Airline.Assembly_AirlineLogic.addFlight
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#["newUsageModel.usagemodel", "newSystem.system", "newRepository.repository"],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				(
+					N = 'Assembly_Airline.Assembly_AirlineLogic (_nVI7kDluEeunY9-OetIYyA)_0';
+					N = 'Assembly_Airline.Assembly_AirlineLogic (_nVI7kDluEeunY9-OetIYyA)_1'
+				).
+			'''
+		)
+	}
+	
+	@Test
+	def void testIdentitySelectorUserAction() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.identity.UserAction."User.User.bookFlight.findFlights"
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#["newUsageModel.usagemodel"],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				(
+					N = 'User.bookFlight.findFlights (_I8izMDlzEeunY9-OetIYyA)_0';
+					N = 'User.bookFlight.findFlights (_I8izMDlzEeunY9-OetIYyA)_1'
+				).
+			'''
+		)
+	}
+	
 	protected def runTest(String query, String dictionaryPath, String expected) {
-		val actual = runGenerator(dictionaryPath, query)
+		runTest(query, dictionaryPath, #[], expected)
+	}
+	
+	protected def runTest(String query, String dictionaryPath, Iterable<String> furtherImports, String expected) {
+		val actual = runGenerator(dictionaryPath, query, furtherImports)
 		assertEquals(expected, actual)
 	}
 
-	protected def runGenerator(String dictionaryPath, CharSequence input) {
+	protected def runGenerator(String dictionaryPath, CharSequence input, Iterable<String> furtherModelFiles) {
 		val baseURI = URI.createPlatformPluginURI(
 			"/org.palladiosimulator.dataflow.confidentiality.pcm.testmodels/models/", false);
 		val relativeDictionaryURI = URI.createURI(dictionaryPath);
@@ -389,11 +475,31 @@ class PCMDFDConstraintLanguageGeneratorTest {
 			}
 		})
 		
+		when(trace.getFactIds(any(EObject), any(Stack))).thenAnswer(new Answer<Collection<String>> {
+			override answer(InvocationOnMock invocation) throws Throwable {
+				val context = invocation.getArgument(1) as Stack<Entity>
+				val element = invocation.getArgument(0) as Identifier
+				val baseId = context.map[entityName].join(".") + ''' («element.id»)'''
+				return #[baseId + "_0", baseId + "_1"]
+			}
+		})
+		
+		when(trace.getFactIds(any(EObject))).thenAnswer(new Answer<Collection<String>> {
+			override answer(InvocationOnMock invocation) throws Throwable {
+				val element = invocation.getArgument(0) as Entity
+				val baseId = '''«element.entityName» («element.id»)'''
+				return #[baseId + "_0", baseId + "_1"]
+			}
+		})
+		
 		val modelURI = dictionaryURI.trimSegments(1).appendSegment("query." +
 			fileExtensionProvider.primaryFileExtension)
 		val modelResource = rs.createResource(modelURI)
 		var fullInput = '''
 			import "«dictionaryURI.lastSegment»"
+			«FOR file : furtherModelFiles»
+				import "«file»"
+			«ENDFOR»
 			«input»
 		'''
 		try (var is = new StringInputStream(fullInput)) {

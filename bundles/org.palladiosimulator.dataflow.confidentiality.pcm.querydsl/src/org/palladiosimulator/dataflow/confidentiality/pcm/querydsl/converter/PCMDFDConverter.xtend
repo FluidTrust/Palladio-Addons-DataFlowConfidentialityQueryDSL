@@ -2,13 +2,22 @@ package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.converter
 
 import de.sebinside.dcp.dsl.dSL.CharacteristicType
 import de.sebinside.dcp.dsl.dSL.NodeIdentitiySelector
+import de.sebinside.dcp.dsl.generator.GlobalConstants.QueryTypes
 import de.sebinside.dcp.dsl.generator.crossplatform.DFDConverter
+import de.uka.ipd.sdq.identifier.Identifier
+import java.util.Collection
+import java.util.Stack
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.SEFFNodeIdentitySelector
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.StoreNodeIdentitySelector
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.UserActionNodeIdentitySelector
 import org.palladiosimulator.dataflow.confidentiality.pcm.transformation.pcm2dfd.trace.PCMSingleTraceElement
 import org.palladiosimulator.dataflow.confidentiality.pcm.workflow.TransitiveTransformationTrace
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.Literal
+import org.palladiosimulator.pcm.core.composition.AssemblyContext
+import org.palladiosimulator.pcm.repository.BasicComponent
+import org.palladiosimulator.supporting.prolog.model.prolog.AtomicQuotedString
 
 import static de.sebinside.dcp.dsl.generator.util.PrologUtils.*
-import de.sebinside.dcp.dsl.generator.GlobalConstants.QueryTypes
 
 class PCMDFDConverter extends DFDConverter {
 	
@@ -38,17 +47,41 @@ class PCMDFDConverter extends DFDConverter {
 		if(id === null) {
 			throw new Exception("Unable to resolve Literal id.")
 		} else {
-			AtomicQuotedString('''«id»''')
+			AtomicQuotedString(id)
 		}
 	}
 
 	override convert(NodeIdentitiySelector selector) {
-		if(selector instanceof NodeIdentitiySelector) {
-			// hier fehler! -> implementiere ähnliche funktion, die eine Liste mit verschiedenen Ids zurückgibt, die dann im query verODERT werden
-			throw new UnsupportedOperationException("This needs to be implemented depending on the selected component!!")
-		} else {
-			throw new Exception("Unable to resolve native dfd node identity selector.")
-		}
+		convertIdentitySelector(selector)
+	}
+	
+	protected def dispatch convertIdentitySelector(SEFFNodeIdentitySelector selector) {
+		val context = new Stack<Identifier>
+		selector.assemblies.forEach[a|context.add(a)]
+		val assemblyContext = context.peek as AssemblyContext
+		val component = (assemblyContext.encapsulatedComponent__AssemblyContext as BasicComponent)
+		val seff = component.serviceEffectSpecifications__BasicComponent.findFirst[seff | seff.describedService__SEFF == selector.signature]
+		val factIds = trace.getFactIds(seff, context)
+		factIds.map[id|AtomicQuotedString(id)].toList
+	}
+	
+	protected def dispatch convertIdentitySelector(StoreNodeIdentitySelector selector) {
+		val context = new Stack<Identifier>
+		selector.assemblies.forEach[a|context.add(a)]
+		val assemblyContext = context.peek as AssemblyContext
+		val component = assemblyContext.encapsulatedComponent__AssemblyContext
+		val factIds = trace.getFactIds(component, context)
+		factIds.map[id|AtomicQuotedString(id)].toList
+	}
+	
+	protected def dispatch convertIdentitySelector(UserActionNodeIdentitySelector selector) {
+		val action = selector.userAction;
+		val factIds = trace.getFactIds(action)
+		factIds.map[id|AtomicQuotedString(id)].toList
+	}
+	
+	protected def dispatch Collection<AtomicQuotedString> convertIdentitySelector(NodeIdentitiySelector selector) {
+		throw new UnsupportedOperationException("No handling for selector of type " + selector.class.name + " available.")
 	}
 
 	override convertVariable(String id) {
