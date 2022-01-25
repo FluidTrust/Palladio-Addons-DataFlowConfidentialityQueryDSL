@@ -54,14 +54,21 @@ class PCMDFDConstraintLanguageGeneratorTest {
 
 	@BeforeAll
 	static def void init() {
-		StandaloneInitializerBuilder.builder.registerProjectURI(Activator,
-			"org.palladiosimulator.dataflow.confidentiality.pcm.testmodels").addCustomTask(
-			new EMFProfileInitializationTask("org.palladiosimulator.dataflow.confidentiality.pcm.model.profile",
-				"profile.emfprofile_diagram")).build.init
+		StandaloneInitializerBuilder.builder
+		.registerProjectURI(Activator, "org.palladiosimulator.dataflow.confidentiality.pcm.testmodels")
+		.build
+		.init
 	}
 
 	@BeforeEach
 	def void setup() {
+		// the injection extensions reset the package registry before every test run
+		// because EMFProfiles do not register profiles as metamodels (despite the
+		// fact that they are metamodels), we have to work around this problem
+		new EMFProfileInitializationTask("org.palladiosimulator.dataflow.confidentiality.pcm.model.profile",
+			"profile.emfprofile_diagram").initilizationWithoutPlatform
+		
+		// real @BeforeEach
 		subject = new PCMDFDConstraintLanguageGenerator()
 		trace = mock(TransitiveTransformationTrace)
 		subject.transitiveTransformationTrace = trace
@@ -372,7 +379,7 @@ class PCMDFDConstraintLanguageGeneratorTest {
 			}
 			''',
 		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
-		#["newUsageModel.usagemodel", "newSystem.system", "newRepository.repository"],
+		#["newSystem.system", "newRepository.repository"],
 		'''
 			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
 				ConstraintName = 'Test',
@@ -397,7 +404,7 @@ class PCMDFDConstraintLanguageGeneratorTest {
 			}
 			''',
 		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
-		#["newUsageModel.usagemodel", "newSystem.system", "newRepository.repository"],
+		#["newSystem.system", "newRepository.repository"],
 		'''
 			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
 				ConstraintName = 'Test',
