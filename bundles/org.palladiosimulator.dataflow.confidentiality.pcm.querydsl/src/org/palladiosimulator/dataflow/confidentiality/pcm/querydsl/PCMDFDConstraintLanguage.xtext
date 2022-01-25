@@ -22,17 +22,17 @@ Model:
 	
 @Override
 PropertySelector:
-	'component' '.' 'property' '.' ref=CharacteristicTypeSelector;
+	'element' '.' 'property' '.' ref=CharacteristicTypeSelector;
 
 @Override
 PropertyClassSelector:
-	'component' '.' 'class' '.' ref=[base::CharacteristicClass];
+	'element' '.' 'class' '.' ref=[base::CharacteristicClass];
 
 @Override
 NodeIdentitiySelector:
-	'component' '.' 'name' '.' name=STRING 
+	'element' '.' 'name' '.' name=STRING 
 	| 
-	'component' '.' 'identity' '.' (
+	'element' '.' 'identity' '.' (
 		'Component' '.' assembly=[composition::AssemblyContext] '.' component=[repository::BasicComponent] |
 		'Action' '.' action=[seff::AbstractAction] |
 		'SEFF' '.' assembly=[composition::AssemblyContext] '.' component=[repository::BasicComponent] '.' signature=[repository::OperationSignature] |
@@ -45,9 +45,9 @@ NodeSelector:
 	PropertySelector | PropertyClassSelector | NodeIdentitiySelector | NodeTypeSelectorForArchitecture;
 
 NodeTypeSelectorForArchitecture:
-	'node' '.' 'type' '.' type=ElementType
+	'element' '.' 'type' '.' type=ElementType
 ;
 
 enum ElementType:
-	COMPONENT = 'Component' | ACTION = 'Action' | SEFF = 'SEFF' | USERACTION = 'UserAction' | STORE = 'Store'
+	SEFF = 'SEFF' | USERACTION = 'UserAction' | STORE = 'Store'
 ;

@@ -73,7 +73,7 @@ class RunDSLQueryTest {
 		val workflow = TransformPCMDFDWithConstraintsToPrologWorkflowFactory.createWorkflow(job)
 		workflow.run
 
-		assertTrue(actual.value.startsWith('''
+		assertEquals('''
 			-------------- GENERAL ---------------
 			Constraint count: 1
 			------------ CONSTRAINT 1 ------------
@@ -84,6 +84,21 @@ class RunDSLQueryTest {
 			Condition: NEVER FLOWS
 			Destination Characteristics: "ownedRoles" set to variable "compRoles"
 			------- CONSTRAINT VIOLATIONS --------
-		'''))
+			1. "ccd (1vdi5kq1lj0aox3a90paf7jgf)" is not allowed to be input in "SEFF Entry Assembly_AirlineLogic.bookFlight (9wiwpw8ljior6vql0wcws9eys)".
+				- Characteristic Variables: set variable "authRoles" has value "User", set variable "compRoles" has value "Airline"
+			
+			2. "ccd (ab0eh30iicmcq89b0rx7vze00)" is not allowed to be input in "Action Entry AirlineLogic.bookFlight.callDB (bvbi6fnbjn119co5asc77rpus)".
+				- Characteristic Variables: set variable "authRoles" has value "User", set variable "compRoles" has value "Airline"
+			
+			3. "booking (64bw8b418hk3rj05kju04ajp0)" is not allowed to be input in "SEFF Entry Assembly_BookingStorage.addBooking (7vvjl8uwklupp1i3f5zvu7v05)".
+				- Characteristic Variables: set variable "authRoles" has value "User", set variable "compRoles" has value "Airline"
+			
+			4. "input (9mjx9mp47inwtvsw0s5x34j4v)" is not allowed to be input in "Store Assembly_BookingStorage.BookingStorage (60ngrmcaiwyfoxjav31glzrb8)".
+				- Characteristic Variables: set variable "authRoles" has value "User", set variable "compRoles" has value "Airline", "Airline"
+			
+			5. "RETURN (2a5qrvwbanm0ehlawp9953af9)" is not allowed to be input in "SEFF Exit Assembly_BookingStorage.getBooking (bni5bxe53ae3qo1q60t311xo6)".
+				- Characteristic Variables: set variable "authRoles" has value "User", set variable "compRoles" has value "Airline", "Airline"
+		'''.toString.replaceAll("\\r\\n", "\\n"),
+		actual.value.replaceAll("\\r\\n", "\\n"))
 	}
 }

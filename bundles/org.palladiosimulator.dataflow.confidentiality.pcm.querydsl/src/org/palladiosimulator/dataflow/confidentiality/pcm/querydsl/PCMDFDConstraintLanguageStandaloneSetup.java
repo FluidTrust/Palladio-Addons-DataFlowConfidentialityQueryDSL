@@ -3,6 +3,9 @@
  */
 package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl;
 
+import org.eclipse.xtext.resource.IResourceServiceProvider;
+import org.eclipse.xtext.resource.generic.GenericResourceServiceProvider;
+
 import com.google.inject.Injector;
 
 /**
@@ -18,7 +21,7 @@ public class PCMDFDConstraintLanguageStandaloneSetup extends PCMDFDConstraintLan
 	public void register(Injector injector) {
 		super.register(injector);
 
-		//IResourceServiceProvider serviceProvider = injector.getInstance(GenericResourceServiceProvider.class);
-		//IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", serviceProvider);
+		IResourceServiceProvider serviceProvider = injector.getInstance(GenericResourceServiceProvider.class);
+		IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap().put("characteristics", serviceProvider);
 	}
 }
