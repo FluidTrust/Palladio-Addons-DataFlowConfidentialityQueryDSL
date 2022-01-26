@@ -5,6 +5,7 @@ package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.scoping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,9 +18,12 @@ import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.FilteringScope;
 import org.eclipse.xtext.scoping.impl.ImportNormalizer;
 import org.eclipse.xtext.scoping.impl.ImportScope;
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.ActionNodeIdentitySelector;
+import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.DataChannelNodeIdentitySelector;
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.PCMDFDConstraintLanguagePackage;
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.SEFFNodeIdentitySelector;
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.StoreNodeIdentitySelector;
+import org.palladiosimulator.dataflow.confidentiality.pcm.queryutils.ModelQueryUtils;
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.CharacteristicType;
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.EnumCharacteristicType;
 import org.palladiosimulator.dataflow.dictionary.characterized.DataDictionaryCharacterized.Enumeration;
@@ -32,6 +36,9 @@ import org.palladiosimulator.pcm.repository.OperationInterface;
 import org.palladiosimulator.pcm.repository.OperationProvidedRole;
 import org.palladiosimulator.pcm.repository.OperationSignature;
 import org.palladiosimulator.pcm.repository.RepositoryPackage;
+import org.palladiosimulator.pcm.seff.AbstractAction;
+import org.palladiosimulator.pcm.seff.ResourceDemandingSEFF;
+import org.palladiosimulator.pcm.seff.SeffPackage;
 import org.palladiosimulator.pcm.seff.ServiceEffectSpecification;
 
 import de.sebinside.dcp.dsl.dSL.CharacteristicTypeSelector;
@@ -44,6 +51,8 @@ import de.sebinside.dcp.dsl.dSL.DSLPackage;
  * to use it.
  */
 public class PCMDFDConstraintLanguageScopeProvider extends AbstractPCMDFDConstraintLanguageScopeProvider {
+
+    protected static ModelQueryUtils queryUtils = new ModelQueryUtils();
 
     @Override
     public IScope getScope(EObject context, EReference reference) {
@@ -58,17 +67,78 @@ public class PCMDFDConstraintLanguageScopeProvider extends AbstractPCMDFDConstra
             return getAssemblyContextHierarchyScope(context, reference);
         }
 
-        if (context instanceof SEFFNodeIdentitySelector
-                && reference == PCMDFDConstraintLanguagePackage.Literals.SEFF_NODE_IDENTITY_SELECTOR__ASSEMBLIES) {
+        if (context instanceof SEFFNodeIdentitySelector) {
+            var selector = (SEFFNodeIdentitySelector) context;
+            var assembliesReference = PCMDFDConstraintLanguagePackage.Literals.SEFF_NODE_IDENTITY_SELECTOR__ASSEMBLIES;
+            if (reference == assembliesReference) {
+                return getAssemblyContextHierarchyScope(selector, reference);
+            }
+            if (reference == PCMDFDConstraintLanguagePackage.Literals.SEFF_NODE_IDENTITY_SELECTOR__SIGNATURE) {
+                return getProvidedSignaturesForAssemblies(selector, reference, assembliesReference);
+            }
+        }
+
+        if (context instanceof DataChannelNodeIdentitySelector
+                && reference == PCMDFDConstraintLanguagePackage.Literals.DATA_CHANNEL_NODE_IDENTITY_SELECTOR__ASSEMBLIES) {
             return getAssemblyContextHierarchyScope(context, reference);
         }
 
-        if (context instanceof SEFFNodeIdentitySelector
-                && reference == PCMDFDConstraintLanguagePackage.Literals.SEFF_NODE_IDENTITY_SELECTOR__SIGNATURE) {
-            return getSignatureForSEFFScope((SEFFNodeIdentitySelector) context, reference);
+        if (context instanceof ActionNodeIdentitySelector) {
+            var selector = (ActionNodeIdentitySelector) context;
+            var assembliesReference = PCMDFDConstraintLanguagePackage.Literals.ACTION_NODE_IDENTITY_SELECTOR__ASSEMBLIES;
+            if (reference == assembliesReference) {
+                return getAssemblyContextHierarchyScope(selector, reference);
+            }
+            if (reference == PCMDFDConstraintLanguagePackage.Literals.ACTION_NODE_IDENTITY_SELECTOR__SIGNATURE) {
+                return getProvidedSignaturesForAssemblies(selector, reference, assembliesReference);
+            }
+            if (reference == PCMDFDConstraintLanguagePackage.Literals.ACTION_NODE_IDENTITY_SELECTOR__ACTION) {
+                return getAction(selector, reference, assembliesReference);
+            }
         }
 
         return super.getScope(context, reference);
+    }
+
+    protected IScope getAction(ActionNodeIdentitySelector selector, EReference reference,
+            EReference assembliesReference) {
+        var assemblies = findResolvedAssemblyContexts(selector, assembliesReference);
+        if (assemblies.isEmpty()) {
+            return IScope.NULLSCOPE;
+        }
+        var component = assemblies.get(assemblies.size() - 1)
+            .getEncapsulatedComponent__AssemblyContext();
+        if (!(component instanceof BasicComponent)) {
+            return IScope.NULLSCOPE;
+        }
+        var basicComponent = (BasicComponent) component;
+
+        var signature = selector.getSignature();
+        if (signature == null || signature.eIsProxy()) {
+            return IScope.NULLSCOPE;
+        }
+
+        var foundSeff = basicComponent.getServiceEffectSpecifications__BasicComponent()
+            .stream()
+            .filter(ResourceDemandingSEFF.class::isInstance)
+            .map(ResourceDemandingSEFF.class::cast)
+            .filter(s -> s.getDescribedService__SEFF()
+                .equals(signature))
+            .findFirst();
+        if (foundSeff.isEmpty()) {
+            return IScope.NULLSCOPE;
+        }
+        var seff = foundSeff.get();
+
+        var seffActions = queryUtils.findAllChildrenIncludingSelfOfType(seff, AbstractAction.class);
+        var seffActionSet = new HashSet<AbstractAction>();
+        seffActions.forEach(seffActionSet::add);
+
+        var superScope = super.getScope(selector, reference);
+        var importNormalizer = new ImportNormalizer(QualifiedName.create(seff.getId()), true, false);
+        var importScope = new ImportScope(Arrays.asList(importNormalizer), superScope, null,
+                SeffPackage.Literals.ABSTRACT_ACTION, false);
+        return new FilteringScope(importScope, description -> seffActionSet.contains(description.getEObjectOrProxy()));
     }
 
     protected IScope getLiteralsScope(EObject context, EReference reference) {
@@ -93,10 +163,10 @@ public class PCMDFDConstraintLanguageScopeProvider extends AbstractPCMDFDConstra
         return super.getScope(context, reference);
     }
 
-    protected IScope getSignatureForSEFFScope(SEFFNodeIdentitySelector context, EReference reference) {
+    protected IScope getProvidedSignaturesForAssemblies(EObject context, EReference reference,
+            EReference assembliesReference) {
         var superScope = super.getScope(context, reference);
-        var selector = (SEFFNodeIdentitySelector) context;
-        var assemblies = selector.getAssemblies();
+        var assemblies = findResolvedAssemblyContexts(context, assembliesReference);
         if (assemblies.isEmpty()) {
             return superScope;
         }
@@ -131,24 +201,8 @@ public class PCMDFDConstraintLanguageScopeProvider extends AbstractPCMDFDConstra
     }
 
     protected IScope getAssemblyContextHierarchyScope(EObject selector, EReference reference) {
-        var referenceValue = selector.eGet(reference, false);
-        if (!(referenceValue instanceof InternalEList<?>)) {
-            throw new IllegalArgumentException(
-                    "The list containing the assembly contexts is not of the expected type.");
-        }
-        // we need the InternalEList because we have to iterate over the contents of the list
-        // without triggering the resolution of the list contents
-        @SuppressWarnings("unchecked")
-        var assemblyList = (InternalEList<AssemblyContext>) selector.eGet(reference, false);
         var superScope = super.getScope(selector, reference);
-        var resolvedAssemblies = new ArrayList<AssemblyContext>();
-        for (var assemblyIter = assemblyList.basicListIterator(); assemblyIter.hasNext();) {
-            var assembly = assemblyIter.next();
-            if (assembly.eIsProxy()) {
-                break;
-            }
-            resolvedAssemblies.add(assembly);
-        }
+        var resolvedAssemblies = findResolvedAssemblyContexts(selector, reference);
         var assemblyNames = resolvedAssemblies.stream()
             .map(Entity::getEntityName)
             .collect(Collectors.toList());
@@ -158,5 +212,26 @@ public class PCMDFDConstraintLanguageScopeProvider extends AbstractPCMDFDConstra
         var importedName = QualifiedName.create(assemblyNames);
         var normalizerList = Arrays.asList(new ImportNormalizer(importedName, true, false));
         return new ImportScope(normalizerList, superScope, null, CompositionPackage.Literals.ASSEMBLY_CONTEXT, false);
+    }
+
+    protected List<AssemblyContext> findResolvedAssemblyContexts(EObject context, EReference assemblyListReference) {
+        var referenceValue = context.eGet(assemblyListReference, false);
+        if (!(referenceValue instanceof InternalEList<?>)) {
+            throw new IllegalArgumentException(
+                    "The list containing the assembly contexts is not of the expected type.");
+        }
+        // we need the InternalEList because we have to iterate over the contents of the list
+        // without triggering the resolution of the list contents
+        @SuppressWarnings("unchecked")
+        var assemblyList = (InternalEList<AssemblyContext>) referenceValue;
+        var resolvedAssemblies = new ArrayList<AssemblyContext>();
+        for (var assemblyIter = assemblyList.basicListIterator(); assemblyIter.hasNext();) {
+            var assembly = assemblyIter.next();
+            if (assembly.eIsProxy()) {
+                break;
+            }
+            resolvedAssemblies.add(assembly);
+        }
+        return resolvedAssemblies;
     }
 }

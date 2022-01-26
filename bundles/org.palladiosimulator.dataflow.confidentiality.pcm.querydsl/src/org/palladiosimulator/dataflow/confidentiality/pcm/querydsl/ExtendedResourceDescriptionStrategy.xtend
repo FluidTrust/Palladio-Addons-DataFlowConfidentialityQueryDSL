@@ -1,33 +1,40 @@
 package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl
 
+import java.util.ArrayList
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.QualifiedName
 import org.eclipse.xtext.resource.EObjectDescription
 import org.eclipse.xtext.resource.IEObjectDescription
+import org.eclipse.xtext.resource.impl.AliasedEObjectDescription
 import org.eclipse.xtext.util.IAcceptor
 import org.palladiosimulator.dataflow.confidentiality.pcm.model.confidentiality.characteristics.CharacteristicTypeDictionary
 import org.palladiosimulator.dataflow.confidentiality.pcm.model.confidentiality.characteristics.CharacteristicsPackage
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.Model
+import org.palladiosimulator.dataflow.confidentiality.pcm.queryutils.ModelQueryUtils
 import org.palladiosimulator.pcm.allocation.Allocation
 import org.palladiosimulator.pcm.allocation.AllocationPackage
 import org.palladiosimulator.pcm.core.composition.AssemblyContext
 import org.palladiosimulator.pcm.core.composition.ComposedStructure
 import org.palladiosimulator.pcm.core.composition.CompositionPackage
+import org.palladiosimulator.pcm.core.entity.Entity
 import org.palladiosimulator.pcm.repository.CollectionDataType
 import org.palladiosimulator.pcm.repository.CompositeDataType
 import org.palladiosimulator.pcm.repository.OperationSignature
 import org.palladiosimulator.pcm.repository.PrimitiveDataType
 import org.palladiosimulator.pcm.repository.Repository
 import org.palladiosimulator.pcm.repository.RepositoryPackage
-import org.palladiosimulator.pcm.usagemodel.UsageModel
-import org.palladiosimulator.pcm.usagemodel.UsagemodelPackage
+import org.palladiosimulator.pcm.seff.AbstractAction
+import org.palladiosimulator.pcm.seff.SeffPackage
 import org.palladiosimulator.pcm.usagemodel.AbstractUserAction
-import org.palladiosimulator.pcm.core.entity.Entity
-import java.util.ArrayList
 import org.palladiosimulator.pcm.usagemodel.ScenarioBehaviour
-import org.eclipse.xtext.resource.impl.AliasedEObjectDescription
+import org.palladiosimulator.pcm.usagemodel.UsageModel
+import org.palladiosimulator.pcm.usagemodel.UsageScenario
+import org.palladiosimulator.pcm.usagemodel.UsagemodelPackage
+import org.palladiosimulator.pcm.seff.ResourceDemandingSEFF
 
 class ExtendedResourceDescriptionStrategy extends de.sebinside.dcp.dsl.ExtendedResourceDescriptionStrategy {
+
+	val extension ModelQueryUtils modelQueryUtils = new ModelQueryUtils
 
 	override createEObjectDescriptions(EObject eObject, IAcceptor<IEObjectDescription> acceptor) {
 		if (eObject instanceof Model) {
@@ -59,8 +66,32 @@ class ExtendedResourceDescriptionStrategy extends de.sebinside.dcp.dsl.ExtendedR
 			createEObjectDescriptionForAbstractUserAction(eObject as AbstractUserAction, acceptor)
 			return true // actions might be nested
 		}
+		
+		if (eObject.eClass == UsagemodelPackage.Literals.USAGE_SCENARIO) {
+			createEObjectDescriptionForUsageScenario(eObject as UsageScenario, acceptor)
+			return true // nested actions are interesting
+		}
+		
+		if (SeffPackage.Literals.ABSTRACT_ACTION.isInstance(eObject)) {
+			createEObjectDescriptionForAbstractAction(eObject as AbstractAction, acceptor)
+			return true // actions might be nested
+		}
 
 		super.createEObjectDescriptions(eObject, acceptor)
+	}
+	
+	protected def createEObjectDescriptionForAbstractAction(AbstractAction action, IAcceptor<IEObjectDescription> acceptor) {
+		// assumption: name of action is unique within SEFF
+		val seff = action.findParentOfType(ResourceDemandingSEFF, false)
+		val qualifiedName = QualifiedName.create(seff.id, action.entityName)
+		val description = EObjectDescription.create(qualifiedName, action)
+		val aliasedDescription = createAliasedDescription(description)
+		acceptor.accept(aliasedDescription)
+	}
+	
+	protected def createEObjectDescriptionForUsageScenario(UsageScenario scenario, IAcceptor<IEObjectDescription> acceptor) {
+		val description = EObjectDescription.create(QualifiedName.create(scenario.entityName), scenario)
+		acceptor.accept(description)
 	}
 	
 	protected def createEObjectDescriptionForAbstractUserAction(AbstractUserAction action, IAcceptor<IEObjectDescription> acceptor) {
@@ -79,13 +110,15 @@ class ExtendedResourceDescriptionStrategy extends de.sebinside.dcp.dsl.ExtendedR
 		val nameSegments = entityHierarchy.reverseView.map[entityName].toList
 		val qualifiedName = QualifiedName.create(nameSegments)
 		val description = EObjectDescription.create(qualifiedName, action)
-
-		val estimatedSegments = nameSegments.join(".").split("\\.")
-		val estimatedQualifiedName = QualifiedName.create(estimatedSegments)
-		
-		val aliasedDescription = new AliasedEObjectDescription(estimatedQualifiedName, description)
+		val aliasedDescription = createAliasedDescription(description)
 
 		acceptor.accept(aliasedDescription)
+	}
+	
+	protected def createAliasedDescription(IEObjectDescription description) {
+		val estimatedSegments = description.name.toString.split("\\.")
+		val estimatedQualifiedName = QualifiedName.create(estimatedSegments)
+		return new AliasedEObjectDescription(estimatedQualifiedName, description)
 	}
 	
 	protected def createEObjectDescriptionForOperationSignature(OperationSignature signature, IAcceptor<IEObjectDescription> acceptor) {

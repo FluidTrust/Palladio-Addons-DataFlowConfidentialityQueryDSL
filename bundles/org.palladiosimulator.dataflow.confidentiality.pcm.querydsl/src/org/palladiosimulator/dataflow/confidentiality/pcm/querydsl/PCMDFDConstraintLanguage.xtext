@@ -30,11 +30,7 @@ PropertyClassSelector:
 
 @Override
 NodeIdentitiySelector:
-	NameNodeIdentitySelector | SEFFNodeIdentitySelector | UserActionNodeIdentitySelector | StoreNodeIdentitySelector;
-
-NameNodeIdentitySelector:
-	'element' '.' 'name' '.' name=STRING
-;
+	SEFFNodeIdentitySelector | UserActionNodeIdentitySelector | StoreNodeIdentitySelector | UserNodeIdentitySelector | DataChannelNodeIdentitySelector | ActionNodeIdentitySelector;
 
 SEFFNodeIdentitySelector:
 	'element' '.' 'identity' '.' 'SEFF' '.' assemblies+=[composition::AssemblyContext|StringOrId] ('.' assemblies+=[composition::AssemblyContext|StringOrId])* '.' signature=[repository::OperationSignature|StringOrId]
@@ -48,6 +44,18 @@ StoreNodeIdentitySelector:
 	'element' '.' 'identity' '.' 'Store' '.' assemblies+=[composition::AssemblyContext|StringOrId] ('.' assemblies+=[composition::AssemblyContext|StringOrId])*
 ;
 
+UserNodeIdentitySelector:
+	'element' '.' 'identity' '.' 'SystemUser' '.' usageScenario=[usagemodel::UsageScenario|StringOrId]
+;
+
+DataChannelNodeIdentitySelector:
+	'element' '.' 'identity' '.' 'DataChannel' '.' assemblies+=[composition::AssemblyContext|StringOrId] ('.' assemblies+=[composition::AssemblyContext|StringOrId])*
+;
+
+ActionNodeIdentitySelector:
+	'element' '.' 'identity' '.' 'Action' '.' assemblies+=[composition::AssemblyContext|StringOrId] ('.' assemblies+=[composition::AssemblyContext|StringOrId])* '.' signature=[repository::OperationSignature|StringOrId] '.' action=[seff::AbstractAction|StringOrId]
+;
+
 @Override
 NodeSelector:
 	PropertySelector | PropertyClassSelector | NodeIdentitiySelector | NodeTypeSelectorForArchitecture;
@@ -57,5 +65,5 @@ NodeTypeSelectorForArchitecture:
 ;
 
 enum ElementType:
-	SEFF = 'SEFF' | USERACTION = 'UserAction' | STORE = 'Store'
+	SEFF = 'SEFF' | USERACTION = 'UserAction' | STORE = 'Store' | USER = 'SystemUser' | DATACHANNEL = 'DataChannel' | ACTION = 'Action' 
 ;

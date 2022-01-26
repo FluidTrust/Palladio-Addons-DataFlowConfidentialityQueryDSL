@@ -389,8 +389,8 @@ class PCMDFDConstraintLanguageGeneratorTest {
 				inputPin(N, PIN),
 				flowTree(N, PIN, S),
 				(
-					N = 'Assembly_Airline.Assembly_FlightDB (_N-cZEDluEeunY9-OetIYyA)_0';
-					N = 'Assembly_Airline.Assembly_FlightDB (_N-cZEDluEeunY9-OetIYyA)_1'
+					N = 'Assembly_Airline.Assembly_FlightDB.FlightDB (_N-cZEDluEeunY9-OetIYyA)_0';
+					N = 'Assembly_Airline.Assembly_FlightDB.FlightDB (_N-cZEDluEeunY9-OetIYyA)_1'
 				).
 			'''
 		)
@@ -420,7 +420,7 @@ class PCMDFDConstraintLanguageGeneratorTest {
 			'''
 		)
 	}
-	
+
 	@Test
 	def void testIdentitySelectorUserAction() {
 		runTest('''
@@ -445,11 +445,204 @@ class PCMDFDConstraintLanguageGeneratorTest {
 			'''
 		)
 	}
+
+	@Test
+	def void testIdentitySelectorUser() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.identity.SystemUser.User
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#["newUsageModel.usagemodel"],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				(
+					N = 'User.bookFlight.findFlights (_I8izMDlzEeunY9-OetIYyA)_0';
+					N = 'User.bookFlight.findFlights (_I8izMDlzEeunY9-OetIYyA)_1';
+					N = 'User.bookFlight.getCCD (_LV0-wDlzEeunY9-OetIYyA)_0';
+					N = 'User.bookFlight.getCCD (_LV0-wDlzEeunY9-OetIYyA)_1';
+					N = 'User.bookFlight.bookFlight (_P3ucoDlzEeunY9-OetIYyA)_0';
+					N = 'User.bookFlight.bookFlight (_P3ucoDlzEeunY9-OetIYyA)_1'
+				).
+			'''
+		)
+	}
+
+	@Test
+	def void testIdentitySelectorAction() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.identity.Action.Assembly_Airline.Assembly_AirlineLogic.addFlight."AirlineLogic.addFlight.call"
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#["newSystem.system", "newRepository.repository"],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				(
+					N = 'Assembly_Airline.Assembly_AirlineLogic.AirlineLogic.addFlight.call (_bZxmsDl3EeunY9-OetIYyA)_0';
+					N = 'Assembly_Airline.Assembly_AirlineLogic.AirlineLogic.addFlight.call (_bZxmsDl3EeunY9-OetIYyA)_1'
+				).
+			'''
+		)
+	}
+
+	@Test
+	def void testTypeSelectorSEFF() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.type.SEFF
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#[],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				(
+					isASEFFEntry(N);
+					isASEFFExit(N)
+				).
+			'''
+		)
+	}
+
+	@Test
+	def void testTypeSelectorUserAction() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.type.UserAction
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#[],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				containedInScenarioBehaviour(N).
+			'''
+		)
+	}
 	
+	@Test
+	def void testTypeSelectorUser() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.type.SystemUser
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#[],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				containedInScenarioBehaviour(N).
+			'''
+		)
+	}
+
+	@Test
+	def void testTypeSelectorStore() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.type.Store
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#[],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				isAStore(N).
+			'''
+		)
+	}
+
+	@Test
+	def void testTypeSelectorDataChannel() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.type.DataChannel
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#[],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				containedInDataChannel(N).
+			'''
+		)
+	}
+
+	@Test
+	def void testTypeSelectorAction() {
+		runTest('''
+			constraint Test {
+				data.any NEVER FLOWS element.type.Action
+			}
+			''',
+		"TravelPlanner_CallReturn_RBAC/CharacteristicTypeDictionary.xmi",
+		#[],
+		'''
+			constraint_Test(ConstraintName, QueryType, N, PIN, S) :-
+				ConstraintName = 'Test',
+				constraint_Test_InputPin(QueryType, N, PIN, S).
+			constraint_Test_InputPin(QueryType, N, PIN, S) :-
+				QueryType = 'InputPin',
+				inputPin(N, PIN),
+				flowTree(N, PIN, S),
+				(
+					containedInComponent(N),
+					\+ isASEFFEntry(N),
+					\+ isASEFFExit(N)
+				).
+			'''
+		)
+	}
+
 	protected def runTest(String query, String dictionaryPath, String expected) {
 		runTest(query, dictionaryPath, #[], expected)
 	}
-	
+
 	protected def runTest(String query, String dictionaryPath, Iterable<String> furtherImports, String expected) {
 		val actual = runGenerator(dictionaryPath, query, furtherImports)
 		assertEquals(expected, actual)
@@ -486,7 +679,11 @@ class PCMDFDConstraintLanguageGeneratorTest {
 			override answer(InvocationOnMock invocation) throws Throwable {
 				val context = invocation.getArgument(1) as Stack<Entity>
 				val element = invocation.getArgument(0) as Identifier
-				val baseId = context.map[entityName].join(".") + ''' («element.id»)'''
+				var elementName = ''' («element.id»)'''
+				if (element instanceof Entity) {
+					elementName = '''.«element.entityName»«elementName»'''
+				}
+				val baseId = context.map[entityName].join(".") + '''«elementName»'''
 				return #[baseId + "_0", baseId + "_1"]
 			}
 		})
