@@ -1,6 +1,5 @@
 package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.converter
 
-import de.sebinside.dcp.dsl.dSL.CharacteristicType
 import de.sebinside.dcp.dsl.dSL.NodeIdentitiySelector
 import de.sebinside.dcp.dsl.generator.GlobalConstants.QueryTypes
 import de.sebinside.dcp.dsl.generator.crossplatform.DFDConverter
@@ -23,6 +22,7 @@ import org.palladiosimulator.pcm.usagemodel.EntryLevelSystemCall
 import org.palladiosimulator.supporting.prolog.model.prolog.AtomicQuotedString
 
 import static de.sebinside.dcp.dsl.generator.util.PrologUtils.*
+import de.sebinside.dcp.dsl.dSL.CharacteristicType
 
 class PCMDFDConverter extends DFDConverter {
 
@@ -42,10 +42,6 @@ class PCMDFDConverter extends DFDConverter {
 		} else {
 			AtomicQuotedString(id)
 		}
-	}
-
-	override convertMember(CharacteristicType characteristicType) {
-		this.convert(characteristicType)
 	}
 
 	override convert(Literal characteristicLiteral) {
@@ -113,35 +109,6 @@ class PCMDFDConverter extends DFDConverter {
 			" available.")
 	}
 
-	override convertVariable(String id) {
-		id
-	// throw new Exception("Unable to resolve Variable.")
-//		val result = trace.value.resolveVariable(id)
-//
-//		if (result.empty) {
-//			id
-//		} else {
-//			val data = result.get.data
-//
-//			if (data instanceof ParameterBasedData) {
-//				data.parameter.parameterName
-//			} else {
-//				data.entityName
-//			}
-//		}
-	}
-
-	override createQualifiedName(NodeIdentitiySelector selector) {
-		selector.name
-	// throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-
-	override resolveQualifiedName(String id, Boolean fullName) {
-//		var entries = trace.getPCMEntries(id)
-		id
-	// throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-
 	override convertCharacteristicLiteral(String id) {
 		var entries = trace.getPCMEntries(id).filter(PCMSingleTraceElement)
 		if (entries.isEmpty) {
@@ -157,11 +124,6 @@ class PCMDFDConverter extends DFDConverter {
 				throw new UnsupportedOperationException("Trace element is faulty: Expected element from type Literal.")
 			}
 		}
-	}
-
-	override qualifiedNameResolvable(String id) {
-		true
-	// throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 
 	override String convertQueryType(QueryTypes queryType, String variableId) {
