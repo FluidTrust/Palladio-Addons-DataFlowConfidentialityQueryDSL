@@ -5,7 +5,6 @@ package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.generator
 
 import de.sebinside.dcp.dsl.dSL.GlobalConstantDefinition
 import de.sebinside.dcp.dsl.dSL.Rule
-import de.sebinside.dcp.dsl.dSL.TargetModelTypeDef
 import de.sebinside.dcp.dsl.generator.DSLGenerator
 import de.sebinside.dcp.dsl.generator.crossplatform.Converter
 import org.eclipse.emf.ecore.resource.Resource
@@ -22,9 +21,6 @@ import org.palladiosimulator.dataflow.confidentiality.pcm.workflow.TransitiveTra
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
 class PCMDFDConstraintLanguageGenerator extends DSLGenerator {
-	
-	TransitiveTransformationTrace transitiveTransformationTrace = null
-	PCMDFDConverter pcmDFDConverter = null
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		// intentionally empty, so the editor does not try to generate a output
@@ -33,25 +29,14 @@ class PCMDFDConstraintLanguageGenerator extends DSLGenerator {
 	def generateFromModel(Model model) {
 		super.generateFromModel(model as de.sebinside.dcp.dsl.dSL.Model)
 	}
-
-	override compile(TargetModelTypeDef typeDefs) {
-		if(transitiveTransformationTrace === null) {
-				throw new Exception("No valid trace for DFD!")
-		}
-		this.pcmDFDConverter = new PCMDFDConverter(transitiveTransformationTrace)
-		this.converter = this.pcmDFDConverter
-	}
 	
 	override generateRule(Rule mainRule, String constraintName, Converter converter, Iterable<GlobalConstantDefinition> globalConstants) {
-		var inputRule = new PCMDFDInputPinQueryRule(mainRule, constraintName, pcmDFDConverter)
+		var inputRule = new PCMDFDInputPinQueryRule(mainRule, constraintName, converter)
 		inputRule.generate(globalConstants)
 	}
 	
 	def setTransitiveTransformationTrace(TransitiveTransformationTrace trace) {
-		this.transitiveTransformationTrace = trace
+		this.converter = new PCMDFDConverter(trace)
 	}
-	
-	override getConverter(){
-		this.pcmDFDConverter
-	}
+
 }

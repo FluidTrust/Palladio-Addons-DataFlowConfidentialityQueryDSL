@@ -1,8 +1,8 @@
 package org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.queryrule
 
 import de.sebinside.dcp.dsl.dSL.Rule
+import de.sebinside.dcp.dsl.generator.crossplatform.Converter
 import de.sebinside.dcp.dsl.generator.queryrule.QueryRule
-import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.converter.PCMDFDConverter
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.NodeIdentitiySelector
 import org.palladiosimulator.dataflow.confidentiality.pcm.querydsl.pCMDFDConstraintLanguage.NodeTypeSelectorForArchitecture
 
@@ -11,7 +11,7 @@ import static de.sebinside.dcp.dsl.generator.util.PrologUtils.*
 
 abstract class PCMDFDQueryRule extends QueryRule {
 
-	new(Rule rule, String nameBase, PCMDFDConverter converter) {
+	new(Rule rule, String nameBase, Converter converter) {
 		super(rule, nameBase, converter)
 	}
 
